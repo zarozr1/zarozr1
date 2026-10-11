@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Follow-Up Tracker</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--ink:#1c2230;--mute:#667085;--line:#e3e6ec;--brand:#1f5fbf;--ok:#1a7f4b;--warn:#b7791f;--bad:#c0362c}
+@media (prefers-color-scheme:dark){:root{--bg:#12151c;--card:#1b2029;--ink:#e8ebf2;--mute:#9aa3b5;--line:#2b3340;--brand:#5b9bff;--ok:#4cc38a;--warn:#e0a94a;--bad:#ff7a6e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:var(--card);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+h1{font-size:18px;margin:0}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+nav{display:flex;gap:4px;padding:8px 16px 0;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--line)}
+nav button{border:0;background:none;color:var(--mute);padding:10px 14px;font-size:15px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+nav button.on{color:var(--brand);border-color:var(--brand);font-weight:600}
+main{padding:16px;max-width:1200px;margin:0 auto}
+button,select,input,textarea{font:inherit;color:inherit}
+.btn{background:var(--brand);color:#fff;border:0;border-radius:6px;padding:7px 12px;cursor:pointer}
+.btn.ghost{background:none;color:var(--brand);border:1px solid var(--line)}
+.btn.sm{padding:3px 8px;font-size:13px}
+.btn.danger{background:none;color:var(--bad);border:1px solid var(--line)}
+input,select,textarea{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.bar input,.bar select{width:auto;min-width:140px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.card .n{font-size:24px;font-weight:700}
+.card .l{color:var(--mute);font-size:13px}
+.card.bad .n{color:var(--bad)}.card.warn .n{color:var(--warn)}.card.ok .n{color:var(--ok)}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:640px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;color:var(--mute);letter-spacing:.04em;cursor:pointer;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tr.over td:first-child{box-shadow:inset 4px 0 var(--bad)}
+tr.soon td:first-child{box-shadow:inset 4px 0 var(--warn)}
+tr.done{opacity:.6}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td select{padding:2px 4px;font-size:13px}
+.tag{font-size:11px;border-radius:99px;padding:1px 8px;border:1px solid var(--line);color:var(--mute);white-space:nowrap}
+.tag.bad{color:var(--bad);border-color:var(--bad)}.tag.warn{color:var(--warn);border-color:var(--warn)}
+.empty{padding:28px;text-align:center;color:var(--mute)}
+h2{font-size:16px;margin:18px 0 8px}
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);padding:18px;width:min(520px,94vw)}
+dialog::backdrop{background:#0008}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.f label{font-size:13px;color:var(--mute);display:block}
+.f .w{grid-column:1/-1}
+.acts{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+@media(max-width:520px){.f{grid-template-columns:1fr}}
+@media print{header .tools,nav,.bar,.acts{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Follow-Up Tracker</h1>
+  <div class="tools">
+    <label>Currency <input id="cur" style="width:70px" placeholder="e.g. USD"></label>
+    <button class="btn ghost sm" id="exp">Export</button>
+    <button class="btn ghost sm" id="imp">Import</button>
+    <input type="file" id="file" accept=".json" hidden>
+  </div>
+</header>
+<nav id="tabs"></nav>
+<main id="view"></main>
+<dialog id="dlg"><form method="dialog" id="form"></form></dialog>
+
+<script>
+"use strict";
+const today = () => new Date().toISOString().slice(0,10);
+const addDays = (d,n) => { const x = new Date(d+'T00:00:00'); x.setDate(x.getDate()+n); return x.toISOString().slice(0,10); };
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Math.random().toString(36).slice(2,10);
+
+/* ---- module definitions ---- */
+const MODULES = {
+  cheques: {
+    title: 'Cheques', single: 'Cheque',
+    statuses: ['Pending','Deposited','Cleared','Bounced','Cancelled'], done: ['Cleared','Cancelled'],
+    dateKey: 'dueDate', dateLabel: 'Due', amountKey: 'amount',
+    fields: [
+      {k:'type', l:'Type', t:'select', o:['Issued (we pay)','Received (we collect)']},
+      {k:'chequeNo', l:'Cheque no.', req:1},
+      {k:'party', l:'Party / payee', req:1, w:1},
+      {k:'bank', l:'Bank'},
+      {k:'amount', l:'Amount', t:'number', req:1},
+      {k:'issueDate', l:'Issue date', t:'date', d:today},
+      {k:'dueDate', l:'Due / deposit date', t:'date', req:1},
+      {k:'ref', l:'Linked purchase / invoice'},
+      {k:'status', l:'Status', t:'status'},
+      {k:'notes', l:'Notes', t:'area', w:1}],
+    cols: ['chequeNo','party','type','bank','amount','dueDate','status','notes']
+  },
+  purchases: {
+    title: 'Purchasing', single: 'Purchase',
+    statuses: ['Requested','Approved','Ordered','Delivered','Paid','Cancelled'], done: ['Paid','Cancelled'],
+    dateKey: 'expectedDate', dateLabel: 'Expected', amountKey: 'amount',
+    fields: [
+      {k:'item', l:'Item / description', req:1, w:1},
+      {k:'supplier', l:'Supplier'},
+      {k:'qty', l:'Quantity', t:'number', d:()=>1},
+      {k:'amount', l:'Total amount', t:'number'},
+      {k:'requestedBy', l:'Requested by'},
+      {k:'requestDate', l:'Request date', t:'date', d:today},
+      {k:'expectedDate', l:'Expected delivery', t:'date', req:1},
+      {k:'poNo', l:'PO / invoice no.'},
+      {k:'status', l:'Status', t:'status'},
+      {k:'notes', l:'Notes', t:'area', w:1}],
+    cols: ['item','supplier','qty','amount','requestedBy','expectedDate','status','notes']
+  },
+  tasks: {
+    title: 'Daily Work', single: 'Task',
+    statuses: ['To do','In progress','Waiting','Done'], done: ['Done'],
+    dateKey: 'date', dateLabel: 'Date', amountKey: null,
+    fields: [
+      {k:'title', l:'Task', req:1, w:1},
+      {k:'owner', l:'Owner'},
+      {k:'priority', l:'Priority', t:'select', o:['High','Medium','Low'], d:()=>'Medium'},
+      {k:'date', l:'Date / follow-up', t:'date', req:1, d:today},
+      {k:'category', l:'Category', t:'select', o:['General','Cheque','Purchasing','Management','Admin']},
+      {k:'status', l:'Status', t:'status'},
+      {k:'notes', l:'Notes', t:'area', w:1}],
+    cols: ['title','owner','priority','category','date','status','notes']
+  }
+};
+const KEYS = Object.keys(MODULES);
+
+/* ---- state ---- */
+let db = load();
+let tab = 'dashboard';
+const ui = {}; // per-module search / filter / sort
+function load(){
+  try { const d = JSON.parse(localStorage.getItem('followup-db')); if (d) return d; } catch(e){}
+  return {currency:'', cheques:[], purchases:[], tasks:[]};
+}
+function save(){ try { localStorage.setItem('followup-db', JSON.stringify(db)); } catch(e){} }
+const money = n => (db.currency ? db.currency+' ' : '') + Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+
+/* ---- helpers ---- */
+const isDone = (m,r) => MODULES[m].done.includes(r.status);
+function urgency(m,r){
+  const d = r[MODULES[m].dateKey];
+  if (isDone(m,r) || !d) return '';
+  if (d < today()) return 'over';
+  if (d <= addDays(today(),7)) return 'soon';
+  return '';
+}
+const fieldOf = (m,k) => MODULES[m].fields.find(f => f.k===k);
+function cell(m,r,k){
+  const f = fieldOf(m,k), v = r[k];
+  if (k==='status') return `<select data-st="${m}:${r.id}">${MODULES[m].statuses.map(s=>`<option${s===v?' selected':''}>${esc(s)}</option>`).join('')}</select>`;
+  if (f.t==='number' && k===MODULES[m].amountKey) return esc(money(v));
+  if (k===MODULES[m].dateKey){
+    const u = urgency(m,r);
+    return esc(v||'') + (u==='over' ? ' <span class="tag bad">overdue</span>' : u==='soon' ? ' <span class="tag warn">soon</span>' : '');
+  }
+  if (k==='priority' && v==='High') return '<span class="tag bad">High</span>';
+  return esc(v);
+}
+
+/* ---- views ---- */
+function render(){
+  document.getElementById('tabs').innerHTML = [['dashboard','Management'],...KEYS.map(k=>[k,MODULES[k].title])]
+    .map(([k,l])=>`<button data-tab="${k}" class="${k===tab?'on':''}">${l}</button>`).join('');
+  document.getElementById('cur').value = db.currency || '';
+  document.getElementById('view').innerHTML = tab==='dashboard' ? dashboard() : list(tab);
+}
+
+function dashboard(){
+  const t = today(), wk = addDays(t,7);
+  const open = m => db[m].filter(r => !isDone(m,r));
+  const over = m => open(m).filter(r => r[MODULES[m].dateKey] && r[MODULES[m].dateKey] < t);
+  const chq = open('cheques');
+  const sum = a => a.reduce((s,r)=>s+Number(r.amount||0),0);
+  const issued = chq.filter(r=>r.type?.startsWith('Issued')), recv = chq.filter(r=>r.type?.startsWith('Received'));
+  const bounced = db.cheques.filter(r=>r.status==='Bounced');
+  const card = (n,l,c='') => `<div class="card ${c}"><div class="n">${n}</div><div class="l">${l}</div></div>`;
+
+  const items = [];
+  KEYS.forEach(m => open(m).forEach(r => {
+    const d = r[MODULES[m].dateKey];
+    if (d && d <= wk) items.push({m,r,d});
+  }));
+  items.sort((a,b)=>a.d.localeCompare(b.d));
+  const label = (m,r) => m==='cheques' ? `Cheque ${r.chequeNo} — ${r.party}${r.amount?' ('+money(r.amount)+')':''}`
+    : m==='purchases' ? `Purchase: ${r.item}${r.supplier?' — '+r.supplier:''}` : `Task: ${r.title}${r.owner?' ('+r.owner+')':''}`;
+  const rows = items.map(({m,r,d}) => `<tr class="${d<t?'over':'soon'}"><td>${esc(d)}${d<t?' <span class="tag bad">overdue</span>':d===t?' <span class="tag warn">today</span>':''}</td>
+    <td>${esc(MODULES[m].title)}</td><td>${esc(label(m,r))}</td>
+    <td><select data-st="${m}:${r.id}">${MODULES[m].statuses.map(s=>`<option${s===r.status?' selected':''}>${esc(s)}</option>`).join('')}</select></td></tr>`).join('');
+
+  return `<div class="grid">
+    ${card(sum(issued) ? money(sum(issued)) : money(0),'Cheques to pay (open)', issued.length?'warn':'')}
+    ${card(money(sum(recv)),'Cheques to collect (open)')}
+    ${card(bounced.length,'Bounced cheques', bounced.length?'bad':'ok')}
+    ${card(open('purchases').length,'Open purchases')}
+    ${card(over('purchases').length,'Late deliveries', over('purchases').length?'bad':'ok')}
+    ${card(open('tasks').length,'Open tasks')}
+    ${card(over('tasks').length,'Overdue tasks', over('tasks').length?'bad':'ok')}
+    ${card(over('cheques').length,'Overdue cheques', over('cheques').length?'bad':'ok')}
+  </div>
+  <h2>Follow-up list — overdue and due in the next 7 days</h2>
+  <div class="tw">${items.length ? `<table><thead><tr><th>Date</th><th>Area</th><th>Item</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`
+    : '<div class="empty">Nothing due. Add items in the other tabs.</div>'}</div>`;
+}
+
+function list(m){
+  const M = MODULES[m], s = ui[m] ||= {q:'', st:'', sort:M.dateKey, dir:1};
+  let rows = db[m].filter(r => (!s.st || (s.st==='_open' ? !isDone(m,r) : r.status===s.st))
+    && (!s.q || JSON.stringify(r).toLowerCase().includes(s.q.toLowerCase())));
+  rows.sort((a,b) => {
+    const x = a[s.sort] ?? '', y = b[s.sort] ?? '';
+    return (typeof x==='number'||fieldOf(m,s.sort)?.t==='number' ? Number(x)-Number(y) : String(x).localeCompare(String(y))) * s.dir;
+  });
+  const total = M.amountKey ? `<span class="tag">Total shown: ${esc(money(rows.reduce((t,r)=>t+Number(r[M.amountKey]||0),0)))}</span>` : '';
+  const head = M.cols.map(k => `<th data-sort="${k}">${esc(fieldOf(m,k).l)}${s.sort===k?(s.dir>0?' ▲':' ▼'):''}</th>`).join('');
+  const body = rows.map(r => `<tr class="${urgency(m,r)} ${isDone(m,r)?'done':''}">${M.cols.map(k=>`<td class="${fieldOf(m,k).t==='number'?'num':''}">${cell(m,r,k)}</td>`).join('')}
+    <td style="white-space:nowrap"><button class="btn ghost sm" data-edit="${m}:${r.id}">Edit</button> <button class="btn danger sm" data-del="${m}:${r.id}">Delete</button></td></tr>`).join('');
+  return `<div class="bar">
+    <button class="btn" data-add="${m}">+ New ${M.single.toLowerCase()}</button>
+    <input data-q="${m}" placeholder="Search…" value="${esc(s.q)}">
+    <select data-filter="${m}"><option value="">All statuses</option><option value="_open"${s.st==='_open'?' selected':''}>Open only</option>
+      ${M.statuses.map(x=>`<option${x===s.st?' selected':''}>${x}</option>`).join('')}</select>
+    <button class="btn ghost sm" data-csv="${m}">Export CSV</button> ${total}</div>
+  <div class="tw">${rows.length ? `<table><thead><tr>${head}<th></th></tr></thead><tbody>${body}</tbody></table>` : `<div class="empty">No ${M.title.toLowerCase()} yet.</div>`}</div>`;
+}
+
+/* ---- form ---- */
+function openForm(m, id){
+  const M = MODULES[m], r = id ? db[m].find(x=>x.id===id) : {};
+  const form = document.getElementById('form');
+  form.innerHTML = `<h2 style="margin-top:0">${id?'Edit':'New'} ${M.single.toLowerCase()}</h2><div class="f">` + M.fields.map(f => {
+    const v = r[f.k] ?? (f.d ? f.d() : (f.t==='status' ? M.statuses[0] : ''));
+    const opts = f.t==='status' ? M.statuses : f.o;
+    let inp;
+    if (opts) inp = `<select name="${f.k}">${opts.map(o=>`<option${o===v?' selected':''}>${esc(o)}</option>`).join('')}</select>`;
+    else if (f.t==='area') inp = `<textarea name="${f.k}" rows="2">${esc(v)}</textarea>`;
+    else inp = `<input name="${f.k}" type="${f.t||'text'}" ${f.t==='number'?'step="any" min="0"':''} value="${esc(v)}" ${f.req?'required':''}>`;
+    return `<div class="${f.w?'w':''}"><label>${esc(f.l)}${f.req?' *':''}</label>${inp}</div>`;
+  }).join('') + `</div><div class="acts"><button type="button" class="btn ghost" id="cancel">Cancel</button><button class="btn" value="ok">Save</button></div>`;
+  form.onsubmit = e => {
+    const fd = new FormData(form), rec = r.id ? r : {id: uid(), created: today()};
+    M.fields.forEach(f => { let v = fd.get(f.k) ?? ''; rec[f.k] = f.t==='number' && v!=='' ? Number(v) : v; });
+    if (!r.id) db[m].push(rec);
+    save(); render();
+  };
+  form.querySelector('#cancel').onclick = () => document.getElementById('dlg').close();
+  document.getElementById('dlg').showModal();
+}
+
+/* ---- CSV / JSON ---- */
+function download(name, text, type){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text],{type})); a.download = name; a.click(); URL.revokeObjectURL(a.href);
+}
+function csv(m){
+  const M = MODULES[m], q = v => '"'+String(v ?? '').replace(/"/g,'""')+'"';
+  const lines = [M.fields.map(f=>q(f.l)).join(',')].concat(db[m].map(r => M.fields.map(f=>q(r[f.k])).join(',')));
+  download(m+'-'+today()+'.csv', '﻿'+lines.join('\n'), 'text/csv');
+}
+
+/* ---- events ---- */
+document.addEventListener('click', e => {
+  const t = e.target.closest('button,th'); if (!t) return;
+  const d = t.dataset;
+  if (d.tab){ tab = d.tab; render(); }
+  else if (d.add) openForm(d.add);
+  else if (d.edit){ const [m,id] = d.edit.split(':'); openForm(m,id); }
+  else if (d.del){ const [m,id] = d.del.split(':'); if (confirm('Delete this record?')){ db[m] = db[m].filter(r=>r.id!==id); save(); render(); } }
+  else if (d.csv) csv(d.csv);
+  else if (d.sort){ const s = ui[tab]; s.dir = s.sort===d.sort ? -s.dir : 1; s.sort = d.sort; render(); }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.st){ const [m,id] = t.dataset.st.split(':'); db[m].find(r=>r.id===id).status = t.value; save(); render(); }
+  else if (t.dataset.filter){ ui[t.dataset.filter].st = t.value; render(); }
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.q){ ui[t.dataset.q].q = t.value; const p = t.selectionStart; render(); const n = document.querySelector('[data-q]'); n.focus(); n.setSelectionRange(p,p); }
+  else if (t.id==='cur'){ db.currency = t.value.trim(); save(); const p=t.selectionStart; render(); const n=document.getElementById('cur'); n.focus(); n.setSelectionRange(p,p); }
+});
+document.getElementById('exp').onclick = () => download('followup-backup-'+today()+'.json', JSON.stringify(db,null,2), 'application/json');
+document.getElementById('imp').onclick = () => document.getElementById('file').click();
+document.getElementById('file').onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if (!KEYS.every(k => Array.isArray(d[k]))) throw 0;
+    if (confirm('Replace all current data with this backup?')){ db = {currency:'', ...d}; save(); render(); }
+  } catch(err){ alert('That file is not a valid backup.'); }
+  e.target.value = '';
+};
+render();
+</script>
+</body>
+</html>
