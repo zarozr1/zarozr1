@@ -88,6 +88,7 @@ td select{padding:3px 6px;font-size:13px;width:auto}
   <main id="view"></main>
 </div>
 <div id="modal" hidden></div>
+<input type="file" id="imp-file" accept=".csv,text/csv" hidden>
 
 <script>
 "use strict";
@@ -99,10 +100,10 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 const MODULES = {
   cheques: {
     title:'Cheques', single:'cheque',
-    statuses:['Pending','Deposited','Cleared','Bounced','Cancelled'], done:['Cleared','Cancelled'],
+    statuses:['Pending','Ready to collect','Deposited','Cleared','Bounced','Cancelled'], done:['Cleared','Cancelled'],
     dateKey:'dueDate', amountKey:'amount',
     fields:[
-      {k:'type', l:'Type', o:['Issued (we pay)','Received (we collect)']},
+      {k:'type', l:'Type', o:['Need to pay','To collect']},
       {k:'chequeNo', l:'Cheque no.', req:1, mono:1},
       {k:'party', l:'Party / payee', req:1, wide:1},
       {k:'bank', l:'Bank'},
@@ -159,6 +160,8 @@ const ui = {};            // per-list search / filter / sort
 let pendingDelete = null; // "module:id" awaiting second click
 
 const money = n => (currency ? currency+' ' : '') + Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+/* Cheque direction; older records saved as Issued / Received still count. */
+const chequeKind = r => /^(need|issued)/i.test(r.type||'') ? 'pay' : /^(to collect|received)/i.test(r.type||'') ? 'collect' : '';
 const isDone = (m,r) => MODULES[m].done.includes(r.status);
 function urgency(m,r){
   const d = r[MODULES[m].dateKey];
@@ -208,7 +211,7 @@ function dashboard(){
   const late = m => open(m).filter(r => r[MODULES[m].dateKey] && r[MODULES[m].dateKey] < t);
   const sum = a => a.reduce((s,r)=>s+Number(r.amount||0),0);
   const chq = open('cheques');
-  const pay = chq.filter(r=>String(r.type).startsWith('Issued')), col = chq.filter(r=>String(r.type).startsWith('Received'));
+  const pay = chq.filter(r=>chequeKind(r)==='pay'), col = chq.filter(r=>chequeKind(r)==='collect'), ready = chq.filter(r=>r.status==='Ready to collect');
   const bounced = data.cheques.filter(r=>r.status==='Bounced');
   const k = (n,l,c='') => `<div class="kpi ${c}"><b>${esc(n)}</b><span>${l}</span></div>`;
   const items = [];
@@ -220,8 +223,9 @@ function dashboard(){
     <td class="mono">${esc(d)}${d<t?'<span class="pill bad">overdue</span>':d===t?'<span class="pill warn">today</span>':''}</td>
     <td>${esc(MODULES[m].title)}</td><td>${esc(label(m,r))}</td><td>${statusSelect(m,r)}</td></tr>`).join('');
   return `<div class="kpis">
-    ${k(money(sum(pay)),'Cheques to pay', pay.length?'warn':'')}
-    ${k(money(sum(col)),'Cheques to collect')}
+    ${k(money(sum(pay)),'Cheques: need to pay', pay.length?'warn':'')}
+    ${k(money(sum(col)),'Cheques: to collect')}
+    ${k(money(sum(ready)),`Ready to collect (${ready.length})`, ready.length?'good':'')}
     ${k(bounced.length,'Bounced cheques', bounced.length?'bad':'good')}
     ${k(late('cheques').length,'Overdue cheques', late('cheques').length?'bad':'good')}
     ${k(open('purchases').length,'Open purchases')}
@@ -257,6 +261,7 @@ function list(m){
     <input type="search" id="q-${m}" data-q="${m}" placeholder="Search ${M.title.toLowerCase()}" value="${esc(s.q)}" aria-label="Search">
     <select id="flt-${m}" data-filter="${m}" aria-label="Filter by status"><option value="">All statuses</option><option value="_open"${s.st==='_open'?' selected':''}>Open only</option>
       ${M.statuses.map(x=>`<option${x===s.st?' selected':''}>${x}</option>`).join('')}</select>
+    ${canWrite && db ? `<button class="btn quiet" data-import="${m}">Import CSV</button>` : ''}
     ${downloads ? `<button class="btn quiet" data-csv="${m}">Export CSV</button>` : ''}${total}</div>
   <div class="tw">${rows.length ? `<table><thead><tr>${head}<th></th></tr></thead><tbody>${body}</tbody></table>`
     : `<div class="empty">${data[m].length ? 'No records match this search or filter.' : `No ${M.title.toLowerCase()} yet.${canWrite?` Use "New ${M.single}" to add the first one.`:''}`}</div>`}</div>`;
@@ -327,13 +332,89 @@ async function exportCsv(m){
   catch (err) { if (err && err.code!=='declined') loadErrorFlash('The file could not be saved here.'); }
 }
 
+
+/* ---- CSV import ---- */
+function parseCsv(text){
+  text = text.replace(/^﻿/,'');
+  const first = text.split(/\r?\n/)[0] || '';
+  const delim = [',',';','\t'].map(d=>[d, first.split(d).length]).sort((a,b)=>b[1]-a[1])[0][0];
+  const rows = []; let row = [], cur = '', q = false;
+  for (let i=0;i<text.length;i++){
+    const c = text[i];
+    if (q){ if (c==='"'){ if (text[i+1]==='"'){ cur+='"'; i++; } else q=false; } else cur+=c; }
+    else if (c==='"') q = true;
+    else if (c===delim){ row.push(cur); cur=''; }
+    else if (c==='\n' || c==='\r'){ if (c==='\r' && text[i+1]==='\n') i++; row.push(cur); cur=''; rows.push(row); row=[]; }
+    else cur+=c;
+  }
+  if (cur!=='' || row.length){ row.push(cur); rows.push(row); }
+  return rows.filter(r => r.some(x=>x.trim()!==''));
+}
+function matchOption(opts, raw, fallback){
+  const v = raw.trim().toLowerCase().replace(/^issued.*/,'need to pay').replace(/^received.*/,'to collect');
+  if (!v) return fallback;
+  return opts.find(o=>o.toLowerCase()===v) || opts.find(o=>o.toLowerCase().startsWith(v)) || fallback;
+}
+function mapCsv(m, rows){
+  const M = MODULES[m];
+  const head = rows[0].map(h => h.replace(/\*/g,'').trim().toLowerCase());
+  const idx = {}; M.fields.forEach(f => { const i = head.findIndex(h => h===f.l.toLowerCase() || h===f.k.toLowerCase()); if (i>=0) idx[f.k]=i; });
+  const good = [], bad = [];
+  rows.slice(1).forEach((r,n) => {
+    const rec = {}; let missing = '';
+    for (const f of M.fields){
+      const raw = idx[f.k]==null ? '' : (r[idx[f.k]] || '').trim();
+      const opts = f.status ? M.statuses : f.o;
+      if (opts) rec[f.k] = matchOption(opts, raw, f.d ? f.d() : opts[0]);
+      else if (f.t==='number'){ const x = parseFloat(raw.replace(/[^0-9.\-]/g,'')); rec[f.k] = Number.isFinite(x) ? x : ''; }
+      else if (f.t==='date'){ const d = raw.replace(/\//g,'-'); rec[f.k] = /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : (f.d && !raw ? f.d() : ''); }
+      else rec[f.k] = raw;
+      if (f.req && (rec[f.k]==='' || rec[f.k]==null) && !missing) missing = f.l;
+    }
+    if (missing) bad.push({line:n+2, why:missing}); else good.push({...rec, created: todayStr()});
+  });
+  return {good, bad, found: Object.keys(idx).length};
+}
+let importPlan = null;
+async function startImport(m, file){
+  let text = ''; try { text = await file.text(); } catch(_){}
+  const rows = parseCsv(text);
+  const M = MODULES[m];
+  const plan = rows.length > 1 ? {m, ...mapCsv(m, rows)} : {m, good:[], bad:[], found:0};
+  importPlan = plan;
+  const problem = !rows.length ? 'The file is empty.' : rows.length<2 ? 'The file has a header row but no records.'
+    : !plan.found ? 'No column headings matched. Use the headings from Export CSV, for example: ' + M.fields.map(f=>f.l).join(', ') + '.' : '';
+  const skipped = plan.bad.length ? `<p>${plan.bad.length} row${plan.bad.length>1?'s':''} will be skipped because a required value is missing or invalid (${[...new Set(plan.bad.map(b=>b.why))].map(esc).join(', ')}). First affected row: line ${plan.bad[0].line}.</p>` : '';
+  $('modal').innerHTML = `<div class="scrim" id="scrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
+    <h3 id="mt">Import ${esc(M.title.toLowerCase())}</h3>
+    ${problem ? `<p>${esc(problem)}</p>` : `<p>${plan.good.length} record${plan.good.length===1?'':'s'} ready to add to ${esc(M.title)}. Existing records are not changed.</p>${skipped}`}
+    <div class="err" id="ferr" role="alert"></div>
+    <div class="acts"><button type="button" class="btn quiet" id="cancel">Cancel</button>
+    ${problem || !plan.good.length ? '' : `<button type="button" class="btn" id="imp-go">Import ${plan.good.length}</button>`}</div></div></div>`;
+  $('modal').hidden = false;
+}
+async function runImport(){
+  if (!importPlan || !db) return;
+  const {m, good} = importPlan; const btn = $('imp-go'); btn.disabled = true;
+  let done = 0;
+  try {
+    for (const rec of good.slice(0,1000)){ await db.collection(m).doc().set(rec); done++; btn.textContent = `Importing ${done} of ${good.length}`; }
+    importPlan = null; closeForm();
+  } catch (err) {
+    btn.disabled = false;
+    $('ferr').textContent = `Imported ${done} of ${good.length} before an error. ` + (err && err.code==='quota_exceeded' ? 'The shared database is full.' : 'Check your connection and try again with the remaining rows.');
+  }
+}
+
 /* ---- events ---- */
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-tab],[data-add],[data-edit],[data-del],[data-csv],[data-sort],#cancel,#scrim');
+  const t = e.target.closest('[data-tab],[data-add],[data-edit],[data-del],[data-csv],[data-sort],[data-import],#cancel,#scrim,#imp-go');
   if (!t) { if (pendingDelete){ pendingDelete = null; render(); } return; }
   const d = t.dataset;
   if (t.id==='scrim'){ if (e.target===t) closeForm(); return; }
   if (t.id==='cancel') return closeForm();
+  if (t.id==='imp-go') return runImport();
+  if (d.import){ $('imp-file').dataset.m = d.import; $('imp-file').value = ''; $('imp-file').click(); return; }
   if (d.del){
     if (pendingDelete===d.del){ const [m,id] = d.del.split(':'); pendingDelete = null; render(); removeRecord(m,id); }
     else { pendingDelete = d.del; render(); }
@@ -348,6 +429,7 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('change', e => {
   const t = e.target;
+  if (t.id==='imp-file'){ const f = t.files[0]; if (f) startImport(t.dataset.m, f); return; }
   if (t.dataset.st){ const [m,id] = t.dataset.st.split(':'); setStatus(m,id,t.value); }
   else if (t.dataset.filter){ ui[t.dataset.filter].st = t.value; render(); }
   else if (t.id==='currency' && db){

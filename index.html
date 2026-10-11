@@ -61,6 +61,7 @@ dialog::backdrop{background:#0008}
     <button class="btn ghost sm" id="exp">Export</button>
     <button class="btn ghost sm" id="imp">Import</button>
     <input type="file" id="file" accept=".json" hidden>
+    <input type="file" id="csvfile" accept=".csv,text/csv" hidden>
   </div>
 </header>
 <nav id="tabs"></nav>
@@ -73,15 +74,16 @@ const today = () => new Date().toISOString().slice(0,10);
 const addDays = (d,n) => { const x = new Date(d+'T00:00:00'); x.setDate(x.getDate()+n); return x.toISOString().slice(0,10); };
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const uid = () => Math.random().toString(36).slice(2,10);
+const todayStr = today;
 
 /* ---- module definitions ---- */
 const MODULES = {
   cheques: {
     title: 'Cheques', single: 'Cheque',
-    statuses: ['Pending','Deposited','Cleared','Bounced','Cancelled'], done: ['Cleared','Cancelled'],
+    statuses: ['Pending','Ready to collect','Deposited','Cleared','Bounced','Cancelled'], done: ['Cleared','Cancelled'],
     dateKey: 'dueDate', dateLabel: 'Due', amountKey: 'amount',
     fields: [
-      {k:'type', l:'Type', t:'select', o:['Issued (we pay)','Received (we collect)']},
+      {k:'type', l:'Type', t:'select', o:['Need to pay','To collect']},
       {k:'chequeNo', l:'Cheque no.', req:1},
       {k:'party', l:'Party / payee', req:1, w:1},
       {k:'bank', l:'Bank'},
@@ -139,6 +141,8 @@ function save(){ try { localStorage.setItem('followup-db', JSON.stringify(db)); 
 const money = n => (db.currency ? db.currency+' ' : '') + Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
 
 /* ---- helpers ---- */
+/* Cheque direction; older records saved as Issued / Received still count. */
+const chequeKind = r => /^(need|issued)/i.test(r.type||'') ? 'pay' : /^(to collect|received)/i.test(r.type||'') ? 'collect' : '';
 const isDone = (m,r) => MODULES[m].done.includes(r.status);
 function urgency(m,r){
   const d = r[MODULES[m].dateKey];
@@ -174,7 +178,7 @@ function dashboard(){
   const over = m => open(m).filter(r => r[MODULES[m].dateKey] && r[MODULES[m].dateKey] < t);
   const chq = open('cheques');
   const sum = a => a.reduce((s,r)=>s+Number(r.amount||0),0);
-  const issued = chq.filter(r=>r.type?.startsWith('Issued')), recv = chq.filter(r=>r.type?.startsWith('Received'));
+  const issued = chq.filter(r=>chequeKind(r)==='pay'), recv = chq.filter(r=>chequeKind(r)==='collect'), ready = chq.filter(r=>r.status==='Ready to collect');
   const bounced = db.cheques.filter(r=>r.status==='Bounced');
   const card = (n,l,c='') => `<div class="card ${c}"><div class="n">${n}</div><div class="l">${l}</div></div>`;
 
@@ -191,8 +195,9 @@ function dashboard(){
     <td><select data-st="${m}:${r.id}">${MODULES[m].statuses.map(s=>`<option${s===r.status?' selected':''}>${esc(s)}</option>`).join('')}</select></td></tr>`).join('');
 
   return `<div class="grid">
-    ${card(sum(issued) ? money(sum(issued)) : money(0),'Cheques to pay (open)', issued.length?'warn':'')}
-    ${card(money(sum(recv)),'Cheques to collect (open)')}
+    ${card(money(sum(issued)),'Cheques: need to pay', issued.length?'warn':'')}
+    ${card(money(sum(recv)),'Cheques: to collect')}
+    ${card(money(sum(ready)),'Ready to collect ('+ready.length+')', ready.length?'ok':'')}
     ${card(bounced.length,'Bounced cheques', bounced.length?'bad':'ok')}
     ${card(open('purchases').length,'Open purchases')}
     ${card(over('purchases').length,'Late deliveries', over('purchases').length?'bad':'ok')}
@@ -222,7 +227,7 @@ function list(m){
     <input data-q="${m}" placeholder="Search…" value="${esc(s.q)}">
     <select data-filter="${m}"><option value="">All statuses</option><option value="_open"${s.st==='_open'?' selected':''}>Open only</option>
       ${M.statuses.map(x=>`<option${x===s.st?' selected':''}>${x}</option>`).join('')}</select>
-    <button class="btn ghost sm" data-csv="${m}">Export CSV</button> ${total}</div>
+    <button class="btn ghost sm" data-import="${m}">Import CSV</button> <button class="btn ghost sm" data-csv="${m}">Export CSV</button> ${total}</div>
   <div class="tw">${rows.length ? `<table><thead><tr>${head}<th></th></tr></thead><tbody>${body}</tbody></table>` : `<div class="empty">No ${M.title.toLowerCase()} yet.</div>`}</div>`;
 }
 
@@ -260,6 +265,62 @@ function csv(m){
   download(m+'-'+today()+'.csv', '﻿'+lines.join('\n'), 'text/csv');
 }
 
+
+/* ---- CSV import ---- */
+function parseCsv(text){
+  text = text.replace(/^﻿/,'');
+  const first = text.split(/\r?\n/)[0] || '';
+  const delim = [',',';','\t'].map(d=>[d, first.split(d).length]).sort((a,b)=>b[1]-a[1])[0][0];
+  const rows = []; let row = [], cur = '', q = false;
+  for (let i=0;i<text.length;i++){
+    const c = text[i];
+    if (q){ if (c==='"'){ if (text[i+1]==='"'){ cur+='"'; i++; } else q=false; } else cur+=c; }
+    else if (c==='"') q = true;
+    else if (c===delim){ row.push(cur); cur=''; }
+    else if (c==='\n' || c==='\r'){ if (c==='\r' && text[i+1]==='\n') i++; row.push(cur); cur=''; rows.push(row); row=[]; }
+    else cur+=c;
+  }
+  if (cur!=='' || row.length){ row.push(cur); rows.push(row); }
+  return rows.filter(r => r.some(x=>x.trim()!==''));
+}
+function matchOption(opts, raw, fallback){
+  const v = raw.trim().toLowerCase().replace(/^issued.*/,'need to pay').replace(/^received.*/,'to collect');
+  if (!v) return fallback;
+  return opts.find(o=>o.toLowerCase()===v) || opts.find(o=>o.toLowerCase().startsWith(v)) || fallback;
+}
+function mapCsv(m, rows){
+  const M = MODULES[m];
+  const head = rows[0].map(h => h.replace(/\*/g,'').trim().toLowerCase());
+  const idx = {}; M.fields.forEach(f => { const i = head.findIndex(h => h===f.l.toLowerCase() || h===f.k.toLowerCase()); if (i>=0) idx[f.k]=i; });
+  const good = [], bad = [];
+  rows.slice(1).forEach((r,n) => {
+    const rec = {}; let missing = '';
+    for (const f of M.fields){
+      const raw = idx[f.k]==null ? '' : (r[idx[f.k]] || '').trim();
+      const opts = f.t==='status' ? M.statuses : f.o;
+      if (opts) rec[f.k] = matchOption(opts, raw, f.d ? f.d() : opts[0]);
+      else if (f.t==='number'){ const x = parseFloat(raw.replace(/[^0-9.\-]/g,'')); rec[f.k] = Number.isFinite(x) ? x : ''; }
+      else if (f.t==='date'){ const d = raw.replace(/\//g,'-'); rec[f.k] = /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : (f.d && !raw ? f.d() : ''); }
+      else rec[f.k] = raw;
+      if (f.req && (rec[f.k]==='' || rec[f.k]==null) && !missing) missing = f.l;
+    }
+    if (missing) bad.push({line:n+2, why:missing}); else good.push({...rec, created: todayStr()});
+  });
+  return {good, bad, found: Object.keys(idx).length};
+}
+
+async function importCsv(m, file){
+  const M = MODULES[m], rows = parseCsv(await file.text());
+  if (rows.length < 2) return alert('That file has no records. Use the headings from Export CSV.');
+  const {good, bad, found} = mapCsv(m, rows);
+  if (!found) return alert('No column headings matched. Use the headings from Export CSV: ' + M.fields.map(f=>f.l).join(', '));
+  if (!good.length) return alert('No rows could be imported. Check the required values: ' + M.fields.filter(f=>f.req).map(f=>f.l).join(', '));
+  const note = bad.length ? `\n${bad.length} row(s) will be skipped for missing or invalid required values (first: line ${bad[0].line}).` : '';
+  if (!confirm(`Add ${good.length} ${M.title.toLowerCase()} record(s)? Existing records are not changed.${note}`)) return;
+  good.forEach(r => db[m].push({id: uid(), ...r}));
+  save(); render();
+}
+
 /* ---- events ---- */
 document.addEventListener('click', e => {
   const t = e.target.closest('button,th'); if (!t) return;
@@ -269,10 +330,12 @@ document.addEventListener('click', e => {
   else if (d.edit){ const [m,id] = d.edit.split(':'); openForm(m,id); }
   else if (d.del){ const [m,id] = d.del.split(':'); if (confirm('Delete this record?')){ db[m] = db[m].filter(r=>r.id!==id); save(); render(); } }
   else if (d.csv) csv(d.csv);
+  else if (d.import){ const i = document.getElementById('csvfile'); i.dataset.m = d.import; i.value = ''; i.click(); }
   else if (d.sort){ const s = ui[tab]; s.dir = s.sort===d.sort ? -s.dir : 1; s.sort = d.sort; render(); }
 });
 document.addEventListener('change', e => {
   const t = e.target;
+  if (t.id==='csvfile'){ if (t.files[0]) importCsv(t.dataset.m, t.files[0]); return; }
   if (t.dataset.st){ const [m,id] = t.dataset.st.split(':'); db[m].find(r=>r.id===id).status = t.value; save(); render(); }
   else if (t.dataset.filter){ ui[t.dataset.filter].st = t.value; render(); }
 });
