@@ -1,0 +1,380 @@
+<title>Follow-Up Desk</title>
+<style>
+/* Layout: sticky header with tabs; dashboard = KPI strip + one dated follow-up list; list tabs = toolbar + table. */
+:root{
+  --bg:#f3f5f6; --panel:#ffffff; --ink:#18232b; --mute:#5f6e78; --line:#dde3e7;
+  --accent:#0d6b6e; --accent-ink:#ffffff; --accent-soft:#e0f0f0;
+  --good:#1b7a4b; --warn:#a96a0a; --bad:#b83227; --bad-soft:#fbe9e7; --warn-soft:#fbf1dc;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#10181d; --panel:#172229; --ink:#e6edf1; --mute:#93a3ad; --line:#27363f;
+  --accent:#4fc1c4; --accent-ink:#06282a; --accent-soft:#16363a;
+  --good:#58c88d; --warn:#e6ab4c; --bad:#ff8378; --bad-soft:#3a1f1d; --warn-soft:#3a2f16; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10181d; --panel:#172229; --ink:#e6edf1; --mute:#93a3ad; --line:#27363f;
+  --accent:#4fc1c4; --accent-ink:#06282a; --accent-soft:#16363a;
+  --good:#58c88d; --warn:#e6ab4c; --bad:#ff8378; --bad-soft:#3a1f1d; --warn-soft:#3a2f16; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45;padding-inline:16px;padding-block:0 40px}
+*{box-sizing:border-box}
+.wrap{max-width:1180px;margin-inline:auto}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 0;border-bottom:1px solid var(--line)}
+.top{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between}
+h1{font-size:20px;font-weight:600;margin:0;letter-spacing:-.01em}
+.cur{display:flex;align-items:center;gap:8px;color:var(--mute);font-size:13px}
+.cur input{width:84px}
+nav{display:flex;gap:2px;overflow-x:auto;margin-top:8px}
+nav button{background:none;border:0;border-bottom:3px solid transparent;color:var(--mute);padding:10px 14px;font:inherit;cursor:pointer;white-space:nowrap}
+nav button[aria-selected="true"]{color:var(--ink);border-color:var(--accent);font-weight:600}
+nav .ct{font-family:var(--mono);font-size:12px;margin-left:6px;color:var(--mute)}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%;min-width:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:6px;padding:8px 14px;cursor:pointer;font-weight:600}
+.btn.quiet{background:none;color:var(--ink);border:1px solid var(--line);font-weight:500}
+.btn.sm{padding:3px 9px;font-size:13px}
+.btn.warnb{background:var(--bad);color:#fff;border-color:var(--bad)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+main{padding-block:18px}
+.notice{background:var(--warn-soft);border:1px solid var(--warn);color:var(--ink);border-radius:8px;padding:10px 14px;margin-bottom:14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:22px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;min-width:0}
+.kpi b{display:block;font-family:var(--mono);font-size:19px;font-weight:500;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.kpi span{color:var(--mute);font-size:13px}
+.kpi.bad b{color:var(--bad)} .kpi.warn b{color:var(--warn)} .kpi.good b{color:var(--good)}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--mute);margin:0 0 8px;font-weight:600}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.bar input[type=search]{flex:1 1 180px;max-width:320px}
+.bar select{width:auto;flex:0 0 auto}
+.total{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--mute)}
+.tw{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:680px}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+tbody tr:last-child td{border-bottom:0}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-weight:600;white-space:nowrap}
+th button{all:unset;cursor:pointer}
+td.num,td.mono{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td.num{text-align:right} th.num{text-align:right}
+tr.over td:first-child{box-shadow:inset 3px 0 var(--bad)}
+tr.soon td:first-child{box-shadow:inset 3px 0 var(--warn)}
+tr.done td{color:var(--mute)}
+td select{padding:3px 6px;font-size:13px;width:auto}
+.pill{display:inline-block;font-size:11px;font-weight:600;border-radius:99px;padding:1px 8px;margin-left:6px;white-space:nowrap}
+.pill.bad{background:var(--bad-soft);color:var(--bad)} .pill.warn{background:var(--warn-soft);color:var(--warn)}
+.empty{padding:34px 16px;text-align:center;color:var(--mute)}
+.rowact{white-space:nowrap;display:flex;gap:6px}
+.scrim{position:fixed;inset:0;background:rgba(8,14,18,.55);display:flex;align-items:flex-start;justify-content:center;padding:5vh 16px;overflow-y:auto;z-index:20}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:10px;width:min(540px,100%);padding:20px}
+.modal h3{margin:0 0 14px;font-size:17px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fields .wide{grid-column:1/-1}
+.fields label{display:block;font-size:13px;color:var(--mute);margin-bottom:3px}
+.acts{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.err{color:var(--bad);font-size:13px;margin-top:10px;min-height:1em}
+@media(max-width:520px){.fields{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:no-preference){.btn{transition:filter .12s}.btn:hover{filter:brightness(1.08)}}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<div class="wrap">
+  <header>
+    <div class="top">
+      <h1>Follow-Up Desk</h1>
+      <label class="cur">Currency <input id="currency" placeholder="e.g. USD" maxlength="8" autocomplete="off"></label>
+    </div>
+    <nav id="tabs" role="tablist" aria-label="Sections"></nav>
+  </header>
+  <main id="view"></main>
+</div>
+<div id="modal" hidden></div>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const todayStr = () => { const d = new Date(); return new Date(d - d.getTimezoneOffset()*6e4).toISOString().slice(0,10); };
+const addDays = (s,n) => { const d = new Date(s+'T00:00:00Z'); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); };
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const MODULES = {
+  cheques: {
+    title:'Cheques', single:'cheque',
+    statuses:['Pending','Deposited','Cleared','Bounced','Cancelled'], done:['Cleared','Cancelled'],
+    dateKey:'dueDate', amountKey:'amount',
+    fields:[
+      {k:'type', l:'Type', o:['Issued (we pay)','Received (we collect)']},
+      {k:'chequeNo', l:'Cheque no.', req:1, mono:1},
+      {k:'party', l:'Party / payee', req:1, wide:1},
+      {k:'bank', l:'Bank'},
+      {k:'amount', l:'Amount', t:'number', req:1},
+      {k:'issueDate', l:'Issue date', t:'date', d:todayStr},
+      {k:'dueDate', l:'Due / deposit date', t:'date', req:1},
+      {k:'ref', l:'Linked purchase / invoice'},
+      {k:'status', l:'Status', status:1},
+      {k:'notes', l:'Notes', area:1, wide:1}],
+    cols:['chequeNo','party','type','bank','amount','dueDate','status','notes']
+  },
+  purchases: {
+    title:'Purchasing', single:'purchase',
+    statuses:['Requested','Approved','Ordered','Delivered','Paid','Cancelled'], done:['Paid','Cancelled'],
+    dateKey:'expectedDate', amountKey:'amount',
+    fields:[
+      {k:'item', l:'Item / description', req:1, wide:1},
+      {k:'supplier', l:'Supplier'},
+      {k:'qty', l:'Quantity', t:'number', d:()=>1},
+      {k:'amount', l:'Total amount', t:'number'},
+      {k:'requestedBy', l:'Requested by'},
+      {k:'requestDate', l:'Request date', t:'date', d:todayStr},
+      {k:'expectedDate', l:'Expected delivery', t:'date', req:1},
+      {k:'poNo', l:'PO / invoice no.', mono:1},
+      {k:'status', l:'Status', status:1},
+      {k:'notes', l:'Notes', area:1, wide:1}],
+    cols:['item','supplier','qty','amount','requestedBy','expectedDate','status','notes']
+  },
+  tasks: {
+    title:'Daily Work', single:'task',
+    statuses:['To do','In progress','Waiting','Done'], done:['Done'],
+    dateKey:'date', amountKey:null,
+    fields:[
+      {k:'title', l:'Task', req:1, wide:1},
+      {k:'owner', l:'Owner'},
+      {k:'priority', l:'Priority', o:['High','Medium','Low'], d:()=>'Medium'},
+      {k:'date', l:'Date / follow-up', t:'date', req:1, d:todayStr},
+      {k:'category', l:'Category', o:['General','Cheque','Purchasing','Management','Admin']},
+      {k:'status', l:'Status', status:1},
+      {k:'notes', l:'Notes', area:1, wide:1}],
+    cols:['title','owner','priority','category','date','status','notes']
+  }
+};
+const KEYS = Object.keys(MODULES);
+const F = (m,k) => MODULES[m].fields.find(f => f.k===k);
+
+/* ---- state ---- */
+let db = null, downloads = null, canWrite = true, offline = false, loadError = '';
+const data = {cheques:[], purchases:[], tasks:[]};
+const ready = {cheques:false, purchases:false, tasks:false};
+let currency = '';
+let tab = 'dashboard';
+const ui = {};            // per-list search / filter / sort
+let pendingDelete = null; // "module:id" awaiting second click
+
+const money = n => (currency ? currency+' ' : '') + Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+const isDone = (m,r) => MODULES[m].done.includes(r.status);
+function urgency(m,r){
+  const d = r[MODULES[m].dateKey];
+  if (!d || isDone(m,r)) return '';
+  const t = todayStr();
+  return d < t ? 'over' : d <= addDays(t,7) ? 'soon' : '';
+}
+const statusSelect = (m,r) => canWrite
+  ? `<select data-st="${m}:${esc(r.id)}" aria-label="Status">${MODULES[m].statuses.map(s=>`<option${s===r.status?' selected':''}>${esc(s)}</option>`).join('')}</select>`
+  : esc(r.status);
+
+function cell(m,r,k){
+  const f = F(m,k), v = r[k];
+  if (k==='status') return statusSelect(m,r);
+  if (k===MODULES[m].amountKey) return v===''||v==null ? '' : esc(money(v));
+  if (k===MODULES[m].dateKey){
+    const u = urgency(m,r), t = todayStr();
+    return esc(v||'') + (u==='over' ? '<span class="pill bad">overdue</span>' : (u==='soon' && v===t) ? '<span class="pill warn">today</span>' : u==='soon' ? '<span class="pill warn">this week</span>' : '');
+  }
+  if (k==='priority' && v==='High') return '<span class="pill bad" style="margin:0">High</span>';
+  return esc(v);
+}
+
+/* ---- rendering ---- */
+function keepFocus(fn){
+  const a = document.activeElement, id = a && a.id, s = a && a.selectionStart, e = a && a.selectionEnd;
+  fn();
+  if (id){ const n = $(id); if (n){ n.focus(); try { n.setSelectionRange(s,e); } catch(_){} } }
+}
+function render(){
+  keepFocus(() => {
+    $('tabs').innerHTML = [['dashboard','Management',null],...KEYS.map(k=>[k,MODULES[k].title,data[k].filter(r=>!isDone(k,r)).length])]
+      .map(([k,l,c])=>`<button role="tab" aria-selected="${k===tab}" data-tab="${k}">${l}${c==null?'':`<span class="ct">${c}</span>`}</button>`).join('');
+    const cur = $('currency'); if (document.activeElement !== cur) cur.value = currency;
+    cur.disabled = !canWrite;
+    const notice = loadError ? `<div class="notice">${esc(loadError)}</div>`
+      : offline ? '<div class="notice">The shared database is not available in this view, so records cannot load. Open the page while signed in to claude.ai.</div>'
+      : !canWrite ? '<div class="notice">You can view these records but not change them. Ask the owner for Contributor access.</div>' : '';
+    const waiting = !offline && !loadError && KEYS.some(k=>!ready[k]);
+    $('view').innerHTML = notice + (waiting ? '<div class="empty">Loading shared records…</div>' : tab==='dashboard' ? dashboard() : list(tab));
+  });
+}
+
+function dashboard(){
+  const t = todayStr(), wk = addDays(t,7);
+  const open = m => data[m].filter(r=>!isDone(m,r));
+  const late = m => open(m).filter(r => r[MODULES[m].dateKey] && r[MODULES[m].dateKey] < t);
+  const sum = a => a.reduce((s,r)=>s+Number(r.amount||0),0);
+  const chq = open('cheques');
+  const pay = chq.filter(r=>String(r.type).startsWith('Issued')), col = chq.filter(r=>String(r.type).startsWith('Received'));
+  const bounced = data.cheques.filter(r=>r.status==='Bounced');
+  const k = (n,l,c='') => `<div class="kpi ${c}"><b>${esc(n)}</b><span>${l}</span></div>`;
+  const items = [];
+  KEYS.forEach(m => open(m).forEach(r => { const d = r[MODULES[m].dateKey]; if (d && d<=wk) items.push({m,r,d}); }));
+  items.sort((a,b)=>a.d.localeCompare(b.d));
+  const label = (m,r) => m==='cheques' ? `Cheque ${r.chequeNo||''} · ${r.party||''}${r.amount!==''&&r.amount!=null?' · '+money(r.amount):''}`
+    : m==='purchases' ? `${r.item||''}${r.supplier?' · '+r.supplier:''}` : `${r.title||''}${r.owner?' · '+r.owner:''}`;
+  const rows = items.map(({m,r,d}) => `<tr class="${d<t?'over':'soon'}">
+    <td class="mono">${esc(d)}${d<t?'<span class="pill bad">overdue</span>':d===t?'<span class="pill warn">today</span>':''}</td>
+    <td>${esc(MODULES[m].title)}</td><td>${esc(label(m,r))}</td><td>${statusSelect(m,r)}</td></tr>`).join('');
+  return `<div class="kpis">
+    ${k(money(sum(pay)),'Cheques to pay', pay.length?'warn':'')}
+    ${k(money(sum(col)),'Cheques to collect')}
+    ${k(bounced.length,'Bounced cheques', bounced.length?'bad':'good')}
+    ${k(late('cheques').length,'Overdue cheques', late('cheques').length?'bad':'good')}
+    ${k(open('purchases').length,'Open purchases')}
+    ${k(late('purchases').length,'Late deliveries', late('purchases').length?'bad':'good')}
+    ${k(open('tasks').length,'Open tasks')}
+    ${k(late('tasks').length,'Overdue tasks', late('tasks').length?'bad':'good')}
+  </div>
+  <h2>Follow up now: overdue and due within 7 days</h2>
+  <div class="tw">${items.length ? `<table><thead><tr><th>Date</th><th>Area</th><th>Item</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`
+    : `<div class="empty">${KEYS.every(m=>!data[m].length) ? 'No records yet. Add a cheque, purchase or task from its tab and it appears here.' : 'Nothing is overdue or due in the next 7 days.'}</div>`}</div>`;
+}
+
+function list(m){
+  const M = MODULES[m];
+  const s = ui[m] ||= {q:'', st:'', sort:M.dateKey, dir:1};
+  const rows = data[m].filter(r => (!s.st || (s.st==='_open' ? !isDone(m,r) : r.status===s.st))
+      && (!s.q || JSON.stringify(Object.values(r)).toLowerCase().includes(s.q.toLowerCase())))
+    .sort((a,b) => {
+      const x = a[s.sort] ?? '', y = b[s.sort] ?? '';
+      return (F(m,s.sort)?.t==='number' ? Number(x)-Number(y) : String(x).localeCompare(String(y))) * s.dir;
+    });
+  const total = M.amountKey ? `<span class="total">Shown: ${esc(money(rows.reduce((t,r)=>t+Number(r[M.amountKey]||0),0)))}</span>` : '';
+  const head = M.cols.map(k => `<th class="${F(m,k).t==='number'?'num':''}"><button data-sort="${k}">${esc(F(m,k).l)}${s.sort===k?(s.dir>0?' ▲':' ▼'):''}</button></th>`).join('');
+  const body = rows.map(r => {
+    const key = m+':'+r.id, confirming = pendingDelete===key;
+    return `<tr class="${urgency(m,r)} ${isDone(m,r)?'done':''}">${M.cols.map(k=>{
+      const f = F(m,k); return `<td class="${f.t==='number'?'num':f.mono?'mono':''}">${cell(m,r,k)}</td>`; }).join('')}
+      <td>${canWrite ? `<div class="rowact"><button class="btn quiet sm" data-edit="${key}">Edit</button>
+        <button class="btn ${confirming?'warnb':'quiet'} sm" data-del="${key}">${confirming?'Confirm delete':'Delete'}</button></div>` : ''}</td></tr>`;
+  }).join('');
+  return `<div class="bar">
+    ${canWrite ? `<button class="btn" data-add="${m}">New ${M.single}</button>` : ''}
+    <input type="search" id="q-${m}" data-q="${m}" placeholder="Search ${M.title.toLowerCase()}" value="${esc(s.q)}" aria-label="Search">
+    <select id="flt-${m}" data-filter="${m}" aria-label="Filter by status"><option value="">All statuses</option><option value="_open"${s.st==='_open'?' selected':''}>Open only</option>
+      ${M.statuses.map(x=>`<option${x===s.st?' selected':''}>${x}</option>`).join('')}</select>
+    ${downloads ? `<button class="btn quiet" data-csv="${m}">Export CSV</button>` : ''}${total}</div>
+  <div class="tw">${rows.length ? `<table><thead><tr>${head}<th></th></tr></thead><tbody>${body}</tbody></table>`
+    : `<div class="empty">${data[m].length ? 'No records match this search or filter.' : `No ${M.title.toLowerCase()} yet.${canWrite?` Use "New ${M.single}" to add the first one.`:''}`}</div>`}</div>`;
+}
+
+/* ---- form ---- */
+let editing = null;
+function openForm(m,id){
+  const M = MODULES[m], r = id ? data[m].find(x=>x.id===id) : null;
+  if (id && !r) return;
+  editing = {m, id: id || null};
+  const fields = M.fields.map(f => {
+    const v = r ? (r[f.k] ?? '') : (f.d ? f.d() : f.status ? M.statuses[0] : f.o ? f.o[0] : '');
+    const opts = f.status ? M.statuses : f.o, fid = 'f-'+f.k;
+    const inp = opts ? `<select id="${fid}">${opts.map(o=>`<option${o===v?' selected':''}>${esc(o)}</option>`).join('')}</select>`
+      : f.area ? `<textarea id="${fid}" rows="2">${esc(v)}</textarea>`
+      : `<input id="${fid}" type="${f.t||'text'}" ${f.t==='number'?'step="any" min="0" inputmode="decimal"':''} value="${esc(v)}" ${f.req?'required':''} autocomplete="off">`;
+    return `<div class="${f.wide?'wide':''}"><label for="${fid}">${esc(f.l)}${f.req?' *':''}</label>${inp}</div>`;
+  }).join('');
+  $('modal').innerHTML = `<div class="scrim" id="scrim"><form class="modal" id="form" role="dialog" aria-modal="true" aria-labelledby="mt">
+    <h3 id="mt">${id?'Edit':'New'} ${M.single}</h3><div class="fields">${fields}</div>
+    <div class="err" id="ferr" role="alert"></div>
+    <div class="acts"><button type="button" class="btn quiet" id="cancel">Cancel</button><button class="btn" id="save">Save</button></div></form></div>`;
+  $('modal').hidden = false;
+  const first = $('form').querySelector('input,select'); if (first) first.focus();
+}
+function closeForm(){ $('modal').hidden = true; $('modal').innerHTML = ''; editing = null; }
+
+async function submitForm(e){
+  e.preventDefault();
+  if (!editing || !db) return;
+  const {m,id} = editing, M = MODULES[m], rec = {};
+  for (const f of M.fields){
+    const v = $('f-'+f.k).value.trim();
+    rec[f.k] = f.t==='number' ? (v==='' ? '' : Number(v)) : v;
+  }
+  $('save').disabled = true;
+  try {
+    const ref = id ? db.collection(m).doc(id) : db.collection(m).doc();
+    let body = {...rec, created: todayStr()};
+    if (id){ const {id:_drop, ...old} = data[m].find(x=>x.id===id); body = {...old, ...rec}; }
+    await ref.set(body);
+    closeForm();
+  } catch (err) { writeError(err, 'ferr'); $('save').disabled = false; }
+}
+function writeError(err, into){
+  const c = err && err.code;
+  const msg = c==='invalid_argument' ? 'You do not have permission to change records on this page.'
+    : c==='quota_exceeded' ? 'The shared database is full. Delete old records to add new ones.'
+    : c==='resource_exhausted' || c==='rate_limited' ? 'Too many changes at once. Wait a moment and try again.'
+    : 'The change was not saved. Check your connection and try again.';
+  if (c==='invalid_argument') { canWrite = false; render(); }
+  const n = into && $(into); if (n) n.textContent = msg; else loadErrorFlash(msg);
+}
+let flashTimer; function loadErrorFlash(msg){ loadError = msg; render(); clearTimeout(flashTimer); flashTimer = setTimeout(()=>{ loadError=''; render(); }, 5000); }
+
+/* ---- actions ---- */
+async function setStatus(m,id,status){
+  try { await db.collection(m).doc(id).update({status}); } catch (err) { writeError(err); render(); }
+}
+async function removeRecord(m,id){
+  try { await db.collection(m).doc(id).delete(); } catch (err) { writeError(err); }
+}
+async function exportCsv(m){
+  const M = MODULES[m], q = v => '"'+String(v ?? '').replace(/"/g,'""')+'"';
+  const lines = [M.fields.map(f=>q(f.l)).join(',')].concat(data[m].map(r=>M.fields.map(f=>q(r[f.k])).join(',')));
+  try { await downloads.save({filename:`${m}-${todayStr()}.csv`, data:'﻿'+lines.join('\n')}); }
+  catch (err) { if (err && err.code!=='declined') loadErrorFlash('The file could not be saved here.'); }
+}
+
+/* ---- events ---- */
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-tab],[data-add],[data-edit],[data-del],[data-csv],[data-sort],#cancel,#scrim');
+  if (!t) { if (pendingDelete){ pendingDelete = null; render(); } return; }
+  const d = t.dataset;
+  if (t.id==='scrim'){ if (e.target===t) closeForm(); return; }
+  if (t.id==='cancel') return closeForm();
+  if (d.del){
+    if (pendingDelete===d.del){ const [m,id] = d.del.split(':'); pendingDelete = null; render(); removeRecord(m,id); }
+    else { pendingDelete = d.del; render(); }
+    return;
+  }
+  pendingDelete = null;
+  if (d.tab){ tab = d.tab; render(); }
+  else if (d.add) openForm(d.add);
+  else if (d.edit){ const [m,id] = d.edit.split(':'); openForm(m,id); }
+  else if (d.csv) exportCsv(d.csv);
+  else if (d.sort){ const s = ui[tab]; s.dir = s.sort===d.sort ? -s.dir : 1; s.sort = d.sort; render(); }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.st){ const [m,id] = t.dataset.st.split(':'); setStatus(m,id,t.value); }
+  else if (t.dataset.filter){ ui[t.dataset.filter].st = t.value; render(); }
+  else if (t.id==='currency' && db){
+    currency = t.value.trim();
+    db.doc('settings/main').set({currency}).catch(err => writeError(err));
+    render();
+  }
+});
+document.addEventListener('input', e => { if (e.target.dataset.q){ ui[e.target.dataset.q].q = e.target.value; render(); } });
+document.addEventListener('submit', e => { if (e.target.id==='form') submitForm(e); });
+document.addEventListener('keydown', e => { if (e.key==='Escape' && editing) closeForm(); });
+
+/* ---- boot ---- */
+async function boot(){
+  render();
+  const claude = window.claude;
+  db = claude && claude.use ? await claude.use('db') : null;
+  if (!db){ offline = true; render(); return; }
+  const user = await claude.use('user');
+  downloads = await claude.use('downloads');
+  const w = user ? await user.can('data.write') : null;
+  canWrite = w !== false;
+  KEYS.forEach(m => db.collection(m).onSnapshot(snap => {
+    data[m] = snap.docs.map(d => ({id:d.id, ...d.data()}));
+    ready[m] = true; render();
+  }, err => { ready[m] = true; loadError = 'Records could not be loaded. Reload the page to try again.'; render(); }));
+  db.doc('settings/main').onSnapshot(s => { const c = s.exists ? (s.data().currency||'') : ''; if (c !== currency){ currency = c; render(); } }, () => {});
+}
+boot();
+</script>

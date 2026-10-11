@@ -14,3 +14,6 @@ Each list has search, status filter, sortable columns, overdue and due-soon high
 
 ## Data
 Data is stored in your browser (localStorage) on this device. Use **Export** and **Import** in the header to back up or move it. Set your currency in the header.
+
+## Shared online version
+`shared-tracker.html` is the same tracker for a team. It is published as a claude.ai page whose records live in a shared database, so everyone with access sees changes live. Share the page from its Share menu: Contributors can add and edit records, Viewers can only read.
