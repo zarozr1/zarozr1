@@ -51,14 +51,9 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#030b1a;font-fam
 
   <!-- S2 logo -->
   <div class="scene" id="s2">
-    <div class="mark" id="s2mark" style="width:300px;height:300px;left:810px;top:150px">
-      <div class="ring" style="border:4px solid var(--blue)"></div>
-      <div class="ring" id="s2dash" style="inset:22px;border:6px dashed var(--cyan)"></div>
-      <div class="ring" style="inset:58px;background:radial-gradient(circle,#0b1b33 0 30%,var(--cyan) 31% 55%,var(--blue) 56% 100%)"></div>
-      <div class="ring" style="inset:128px;background:#020814;box-shadow:0 0 30px var(--cyan)"></div>
-    </div>
-    <div class="abs wordmark" id="s2word" style="top:480px;left:0;right:0;text-align:center;font-size:110px">IRIS <span style="font-weight:500;color:#9cc3ff">Technology</span></div>
-    <div class="abs" id="s2tag" style="top:640px;left:0;right:0;text-align:center;font-size:62px;font-weight:700">أمنك السيبراني… <span style="color:var(--cyan)">رؤيتنا الواضحة</span></div>
+    <img class="abs" id="s2mark" src="logo/iris_icon.png" style="width:300px;height:300px;left:810px;top:120px;filter:drop-shadow(0 0 40px rgba(62,200,230,.55))">
+    <img class="abs" id="s2word" src="logo/iris_wordmark.png" style="width:620px;left:650px;top:450px">
+    <div class="abs" id="s2tag" style="top:735px;left:0;right:0;text-align:center;font-size:62px;font-weight:700">أمنك السيبراني… <span style="color:var(--cyan)">رؤيتنا الواضحة</span></div>
   </div>
 
   <!-- S3 since 2011 / offices -->
@@ -146,13 +141,8 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#030b1a;font-fam
 
   <!-- S9 closing -->
   <div class="scene" id="s9">
-    <div class="mark" id="s9mark" style="width:220px;height:220px;left:850px;top:110px">
-      <div class="ring" style="border:4px solid var(--blue)"></div>
-      <div class="ring" id="s9dash" style="inset:16px;border:5px dashed var(--cyan)"></div>
-      <div class="ring" style="inset:42px;background:radial-gradient(circle,#0b1b33 0 30%,var(--cyan) 31% 55%,var(--blue) 56% 100%)"></div>
-      <div class="ring" style="inset:94px;background:#020814;box-shadow:0 0 30px var(--cyan)"></div>
-    </div>
-    <div class="abs wordmark" id="s9word" style="top:350px;left:0;right:0;text-align:center;font-size:96px">IRIS <span style="font-weight:500;color:#9cc3ff">Technology</span></div>
+    <img class="abs" id="s9mark" src="logo/iris_logo.png" style="width:900px;left:510px;top:90px;filter:drop-shadow(0 0 30px rgba(0,0,0,.6))">
+    <div class="abs en" id="s9word" style="top:420px;left:0;right:0;text-align:center;font-size:34px;letter-spacing:.06em;color:#7fdcf0">Secure the present. Engineer what’s next.</div>
     <div class="abs" id="s9t1" style="top:490px;left:0;right:0;text-align:center;font-size:66px;font-weight:800">لا تنتظر الهجوم القادم</div>
     <div class="abs" id="s9t2" style="top:610px;left:0;right:0;text-align:center">
       <span class="pill" style="background:#fff;color:#0a3f8f;font-size:44px;padding:10px 46px">تواصل معنا اليوم • <span class="en">iristechnology.me</span></span>
@@ -165,27 +155,28 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#030b1a;font-fam
 </div>
 
 <script>
-const S=[[0,3.8],[3.8,8.6],[8.6,17.7],[17.7,24.5],[24.5,34.2],[34.2,42.1],[42.1,52.0],[52.0,58.4],[58.4,65.5]];
+const S=[[0,3.4],[3.4,8.05],[8.05,18.2],[18.2,25.55],[25.55,37.3],[37.3,44.4],[44.4,51.98],[51.98,58.3],[58.3,65.5]];
 const SUBS=[
-[0,3.8,'كل ثانية، هناك من يحاول اختراق شركتك.','Every second… someone is trying to breach your company.'],
-[3.9,8.6,'مع آيرس تكنولوجي، أمنك السيبراني يصبح رؤيتنا الواضحة.','With IRIS Technology… your cybersecurity becomes our clear vision.'],
-[8.7,12.8,'منذ عام 2011، ومن مكاتبنا في عمّان والرياض،','Since 2011, from our offices in Amman and Riyadh,'],
-[12.85,17.7,'نصمّم ونورّد وننفّذ حلول التقنية للشركات في الشرق الأوسط.','we design, supply and deliver technology solutions for businesses across the Middle East.'],
-[17.75,21.9,'من الأمن السيبراني والشبكات، إلى البنية التحتية والسحابة،','From cybersecurity and networking to infrastructure and cloud,'],
-[21.9,24.5,'والخدمات المُدارة على مدار الساعة.','and round-the-clock managed services.'],
-[24.55,27.2,'بصفتنا شريكاً بلاتينياً لشركة Fortinet،','As a Fortinet Platinum Partner,'],
-[27.25,30.65,'نحمي شبكتك بجدران الحماية FortiGate من الجيل التالي،','we protect your network with next-generation FortiGate firewalls,'],
-[30.7,34.2,'واتصالات VPN آمنة، وحلول SD-WAN.','secure VPN connectivity and SD-WAN.'],
-[34.3,37.6,'ومع Kaspersky، نحمي كل جهاز وخادم،','With Kaspersky, we protect every device and server,'],
-[37.6,42.1,'ونكشف التهديدات ونستجيب لها قبل أن تصل إلى بياناتك.','detecting and responding to threats before they reach your data.'],
-[42.15,47.3,'سواء كنت شركة ناشئة تحتاج حماية بسيطة وبتكلفة مناسبة،','Whether you are a startup needing simple, affordable protection,'],
-[47.35,52.0,'أو مؤسسة كبرى بآلاف الأجهزة، لدينا الحل المناسب لك.','or a large enterprise with thousands of devices, we have the right solution.'],
-[52.05,55.4,'نفهم مخاطرك، نصمّم الحل، ننفّذه،','We understand your risks, design the solution, deliver it,'],
-[55.4,58.45,'ثم ندرّب فريقك وندعمك باستمرار.','then train your team and support you continuously.'],
-[58.5,61.75,'آيرس تكنولوجي. لا تنتظر الهجوم القادم.','IRIS Technology… don\'t wait for the next attack.'],
-[61.8,65.5,'تواصل معنا اليوم.','Contact us today.']];
-const SERV=[[17.9,'🛡️','الأمن السيبراني','Cybersecurity'],[18.9,'🌐','الشبكات','Networking'],[20.0,'☁️','البنية التحتية والسحابة','Infrastructure & Cloud'],[21.9,'📡','خدمات مُدارة 24/7','Managed SOC / NOC']];
-const STEPS=[[52.1,'1','نفهم','مخاطرك'],[53.5,'2','نصمّم','الحل'],[54.6,'3','ننفّذ','باحتراف'],[55.7,'4','ندرّب وندعم','باستمرار']];
+[0,3.35,'كل ثانية، هناك من يحاول اختراق شركتك.','Every second… someone is trying to breach your company.'],
+[3.4,8.0,'مع آيرس تكنولوجي، أمنك السيبراني يصبح رؤيتنا الواضحة.','With IRIS Technology… your cybersecurity becomes our clear vision.'],
+[8.05,12.55,'منذ عام 2011، ومن مكاتبنا في عمّان والرياض،','Since 2011, from our offices in Amman and Riyadh,'],
+[12.55,18.2,'نصمّم ونورّد وننفّذ حلول التقنية للشركات في الشرق الأوسط.','we design, supply and deliver technology solutions for businesses across the Middle East.'],
+[18.25,22.85,'من الأمن السيبراني والشبكات، إلى البنية التحتية والسحابة،','From cybersecurity and networking to infrastructure and cloud,'],
+[22.85,25.55,'والخدمات المُدارة على مدار الساعة.','and round-the-clock managed services.'],
+[25.6,28.85,'بصفتنا شريكاً بلاتينياً لشركة Fortinet،','As a Fortinet Platinum Partner,'],
+[28.85,33.43,'نحمي شبكتك بجدران الحماية FortiGate من الجيل التالي،','we protect your network with next-generation FortiGate firewalls,'],
+[33.45,37.2,'واتصالات VPN آمنة، وحلول SD-WAN.','secure VPN connectivity and SD-WAN.'],
+[37.6,40.6,'ومع Kaspersky، نحمي كل جهاز وخادم،','With Kaspersky, we protect every device and server,'],
+[40.6,44.4,'ونكشف التهديدات ونستجيب لها قبل أن تصل إلى بياناتك.','detecting and responding to threats before they reach your data.'],
+[44.4,48.32,'سواء كنت شركة ناشئة تحتاج حماية بسيطة وبتكلفة مناسبة،','Whether you are a startup needing simple, affordable protection,'],
+[48.32,51.98,'أو مؤسسة كبرى بآلاف الأجهزة، لدينا الحل المناسب لك.','or a large enterprise with thousands of devices, we have the right solution.'],
+[51.98,55.15,'نفهم مخاطرك، نصمّم الحل، ننفّذه،','We understand your risks, design the solution, deliver it,'],
+[55.15,58.3,'ثم ندرّب فريقك وندعمك باستمرار.','then train your team and support you continuously.'],
+[58.4,61.9,'آيرس تكنولوجي. لا تنتظر الهجوم القادم.','IRIS Technology… don\'t wait for the next attack.'],
+[61.9,65.5,'تواصل معنا اليوم.','Contact us today.']
+];
+const SERV=[[18.5,'🛡️','الأمن السيبراني','Cybersecurity'],[19.7,'🌐','الشبكات','Networking'],[20.9,'☁️','البنية التحتية والسحابة','Infrastructure & Cloud'],[22.9,'📡','خدمات مُدارة 24/7','Managed SOC / NOC']];
+const STEPS=[[52.1,'1','نفهم','مخاطرك'],[53.2,'2','نصمّم','الحل'],[54.3,'3','ننفّذ','باحتراف'],[55.5,'4','ندرّب وندعم','باستمرار']];
 const $=id=>document.getElementById(id);
 // build cards
 SERV.forEach((s,i)=>{const d=document.createElement('div');d.className='card';d.id='sv'+i;
@@ -205,47 +196,47 @@ let shotA=96, shotB=182;
 function render(t){
   // background / AI shot
   const shot=$('shot'), shade=$('shade');
-  if(t<3.84){shot.style.display='block';shot.src=`shot_a/${String(Math.min(shotA,Math.floor(t*25)+1)).padStart(4,'0')}.jpg`;
+  if(t<3.4){shot.style.display='block';shot.src=`shot_a/${String(Math.min(shotA,Math.floor(t*25)+1)).padStart(4,'0')}.jpg`;
     shade.style.background=`radial-gradient(ellipse at center,rgba(0,0,0,.15) 30%,rgba(120,0,10,${.35+.25*Math.abs(Math.sin(t*5))}) 100%)`;
-    shot.style.opacity=t>3.4?1-(t-3.4)/.44:1;}
-  else if(t>=58.4){shot.style.display='block';shot.src=`shot_b/${String(Math.min(shotB,Math.floor((t-58.4)*25)+1)).padStart(4,'0')}.jpg`;
-    shot.style.opacity=clamp((t-58.4)/.5);shade.style.background='linear-gradient(rgba(2,8,20,.55),rgba(2,8,20,.8))';}
+    shot.style.opacity=t>3.0?1-(t-3.0)/.4:1;}
+  else if(t>=58.3){shot.style.display='block';shot.src=`shot_b/${String(Math.min(shotB,Math.floor((t-58.3)*25)+1)).padStart(4,'0')}.jpg`;
+    shot.style.opacity=clamp((t-58.3)/.5);shade.style.background='linear-gradient(rgba(2,8,20,.55),rgba(2,8,20,.8))';}
   else {shot.style.display='none';shade.style.background='none';}
   $('grid').style.transform=`translate(${(t*12)%80}px,${(t*6)%80}px)`;
   // scenes
   S.forEach((r,i)=>{$('s'+(i+1)).style.opacity=sceneAlpha(t,r)});
   // S1
   $('s1alert').style.opacity=(Math.floor(t*3)%2===0||t>1.5)?1:.35;
-  pop($('s1t'),t,.1); pop($('s1t2'),t,1.1);
+  pop($('s1t'),t,.1); pop($('s1t2'),t,1.0);
   // S2
-  const k2=inOut(t,3.9,.9); $('s2mark').style.transform=`scale(${.4+.6*k2}) rotate(${(1-k2)*-120}deg)`;$('s2mark').style.opacity=k2;
-  $('s2dash').style.transform=`rotate(${t*25}deg)`;
-  pop($('s2word'),t,4.3); pop($('s2tag'),t,5.5);
+  const k2=inOut(t,3.45,.9); $('s2mark').style.transform=`scale(${.4+.6*k2}) rotate(${(1-k2)*-120+Math.sin(t*1.5)*3}deg)`;$('s2mark').style.opacity=k2;
+  
+  pop($('s2word'),t,3.9); pop($('s2tag'),t,4.9);
   // S3
-  pop($('s3year'),t,8.7,60,.8);
-  $('s3amman').style.opacity=inOut(t,11.0,.4); $('s3riyadh').style.opacity=inOut(t,11.6,.4);
-  $('s3arc').style.strokeDashoffset=700*(1-inOut(t,12.0,1.2));
-  $('s3map').style.opacity=inOut(t,10.6,.5);
+  pop($('s3year'),t,8.1,60,.8);
+  $('s3amman').style.opacity=inOut(t,11.3,.4); $('s3riyadh').style.opacity=inOut(t,11.8,.4);
+  $('s3arc').style.strokeDashoffset=700*(1-inOut(t,12.1,1.2));
+  $('s3map').style.opacity=inOut(t,10.2,.5);
   // S4
   SERV.forEach((s,i)=>pop($('sv'+i),t,s[0],60));
   // S5
-  pop($('s5card'),t,24.6,50,.6);
-  $('s5check').style.strokeDashoffset=80*(1-inOut(t,26.0,.6));
-  pop($('s5b1'),t,28.3);pop($('s5b2'),t,30.7);pop($('s5b3'),t,32.7);
+  pop($('s5card'),t,25.6,50,.6);
+  $('s5check').style.strokeDashoffset=80*(1-inOut(t,27.0,.6));
+  pop($('s5b1'),t,30.1);pop($('s5b2'),t,33.5);pop($('s5b3'),t,35.5);
   // S6
-  pop($('s6card'),t,34.3,50,.6);
+  pop($('s6card'),t,37.35,50,.6);
   $('s6scan').setAttribute('r',10+6*Math.abs(Math.sin(t*2.5)));
-  pop($('s6b1'),t,35.5);pop($('s6b2'),t,37.6);pop($('s6b3'),t,39.8);
+  pop($('s6b1'),t,38.9);pop($('s6b2'),t,40.6);pop($('s6b3'),t,42.8);
   // S7
-  pop($('s7a'),t,42.3,60);pop($('s7b'),t,47.4,60);pop($('s7c'),t,50.1);
+  pop($('s7a'),t,44.5,60);pop($('s7b'),t,48.4,60);pop($('s7c'),t,50.5);
   // S8
   STEPS.forEach((s,i)=>pop($('st'+i),t,s[0],60));
   // S9
-  const k9=inOut(t,58.6,.9);$('s9mark').style.opacity=k9;$('s9mark').style.transform=`scale(${.5+.5*k9})`;
-  $('s9dash').style.transform=`rotate(${t*25}deg)`;
-  pop($('s9word'),t,58.9);pop($('s9t1'),t,59.9);pop($('s9t2'),t,61.8);
+  const k9=inOut(t,58.4,.9);$('s9mark').style.opacity=k9;$('s9mark').style.transform=`scale(${.5+.5*k9})`;
+  
+  pop($('s9word'),t,58.9);pop($('s9t1'),t,59.85);pop($('s9t2'),t,62.0);
   // flash on logo reveals
-  $('flash').style.opacity=Math.max(0,.35-Math.abs(t-3.9)*1.4,.25-Math.abs(t-58.5)*1.2);
+  $('flash').style.opacity=Math.max(0,.35-Math.abs(t-3.45)*1.4,.2-Math.abs(t-58.4)*1.2);
   // subtitles
   const c=SUBS.find(s=>t>=s[0]&&t<s[1]);
   $('subs').style.opacity=c?1:0;

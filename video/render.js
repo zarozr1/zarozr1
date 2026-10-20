@@ -23,7 +23,7 @@ const mode = process.argv[2] || 'preview';
   };
 
   if (mode === 'preview') {
-    const times = [2.5, 7.5, 15, 23.5, 33.5, 41.5, 51, 57.5, 63];
+    const times = [2.5, 7.5, 15, 24.5, 36.5, 43.5, 51, 57.5, 63.5];
     for (const t of times) {
       await draw(t);
       await page.screenshot({ path: path.join(__dirname, 'preview', `t${t}.jpg`), type: 'jpeg', quality: 80 });
