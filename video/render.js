@@ -4,7 +4,7 @@ const { chromium } = require('/opt/node-tools/node_modules/playwright');
 const { spawn } = require('child_process');
 const path = require('path');
 
-const FPS = 25, DUR = 65.5;
+const FPS = 25, DUR = 88.7;
 const mode = process.argv[2] || 'preview';
 
 (async () => {
@@ -23,7 +23,7 @@ const mode = process.argv[2] || 'preview';
   };
 
   if (mode === 'preview') {
-    const times = [2.5, 7.5, 15, 24.5, 36.5, 43.5, 51, 57.5, 63.5];
+    const times = [43.5, 47.5, 52.5, 60, 64.5, 70, 80.5, 86.5];
     for (const t of times) {
       await draw(t);
       await page.screenshot({ path: path.join(__dirname, 'preview', `t${t}.jpg`), type: 'jpeg', quality: 80 });

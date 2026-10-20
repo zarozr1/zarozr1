@@ -380,9 +380,13 @@ function renderOld(t){
 }
 // inserted AI + partners block (times relative to the final narration)
 const INS0=44.41;            // where the block starts
-let INSD=0, AI_D=0;          // block duration and AI-scene duration (set below)
-let NEW_SUBS=[];             // [start,end,ar,en] in block-local seconds
-window.PA_HL={};
+let INSD=23.16, AI_D=11.4;   // block duration and AI-scene duration
+let NEW_SUBS=[               // [start,end,ar,en] in block-local seconds
+ [0.45,6.83,'وفي عصر الذكاء الاصطناعي‏،‏ نوفّر حلول Claude من Anthropic‏،‏ OpenAI‏،‏ Google‏،‏ Microsoft‏،‏','In the age of AI, we deliver solutions from Claude by Anthropic, OpenAI, Google and Microsoft,'],
+ [6.83,11.4,'لأتمتة العمليات‏،‏ وتسريع كشف التهديدات‏،‏ وتحليل البيانات.','to automate operations, accelerate threat detection and analyze data.'],
+ [11.6,18.54,'ونعمل مع أكثر من 40 شركة تقنية عالمية‏،‏ من Cisco‏،‏ Palo Alto Networks‏،‏ AWS‏،‏','We work with more than 40 global technology companies, from Cisco, Palo Alto Networks and AWS,'],
+ [18.54,23.16,'إلى IBM‏،‏ Huawei‏،‏ CrowdStrike‏،‏ لنختار لك الأنسب.','to IBM, Huawei and CrowdStrike, to choose what fits you best.']];
+window.PA_HL={cisco:3.70,paloalto:4.33,aws:5.85,ibm:7.47,huawei:8.08,crowdstrike:8.60};
 function render(t){
   const inBlock=t>=INS0&&t<INS0+INSD;
   if(!inBlock){renderOld(t<INS0?t:t-INSD);$('sAI').style.opacity=0;$('sPA').style.opacity=0;return;}
