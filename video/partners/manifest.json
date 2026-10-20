@@ -1,0 +1,248 @@
+[
+ {
+  "slug": "opentext",
+  "name": "OpenText",
+  "file": "partners/opentext.png",
+  "category": "security"
+ },
+ {
+  "slug": "paessler_prtg",
+  "name": "Paessler PRTG",
+  "file": "partners/paessler_prtg.png",
+  "category": "network_infra"
+ },
+ {
+  "slug": "paloalto",
+  "name": "Palo Alto Networks",
+  "file": "partners/paloalto.png",
+  "category": "security"
+ },
+ {
+  "slug": "phishrod",
+  "name": "PhishRod",
+  "file": "partners/phishrod.png",
+  "category": "security"
+ },
+ {
+  "slug": "proofpoint",
+  "name": "Proofpoint",
+  "file": "partners/proofpoint.png",
+  "category": "security"
+ },
+ {
+  "slug": "quest",
+  "name": "Quest",
+  "file": "partners/quest.png",
+  "category": "network_infra"
+ },
+ {
+  "slug": "recorded_future",
+  "name": "Recorded Future",
+  "file": "partners/recorded_future.png",
+  "category": "security"
+ },
+ {
+  "slug": "sailpoint",
+  "name": "SailPoint",
+  "file": "partners/sailpoint.png",
+  "category": "security"
+ },
+ {
+  "slug": "schneider",
+  "name": "Schneider Electric",
+  "file": "partners/schneider.png",
+  "category": "network_infra"
+ },
+ {
+  "slug": "seclore",
+  "name": "Seclore",
+  "file": "partners/seclore.png",
+  "category": "security"
+ },
+ {
+  "slug": "trellix",
+  "name": "Trellix",
+  "file": "partners/trellix.png",
+  "category": "security"
+ },
+ {
+  "slug": "hikvision",
+  "name": "Hikvision",
+  "file": "partners/hikvision.png",
+  "category": "network_infra"
+ },
+ {
+  "slug": "huawei",
+  "name": "Huawei",
+  "file": "partners/huawei.png",
+  "category": "network_infra"
+ },
+ {
+  "slug": "ibm",
+  "name": "IBM",
+  "file": "partners/ibm.png",
+  "category": "ai"
+ },
+ {
+  "slug": "kaspersky",
+  "name": "Kaspersky",
+  "file": "partners/kaspersky.png",
+  "category": "security"
+ },
+ {
+  "slug": "lenovo",
+  "name": "Lenovo",
+  "file": "partners/lenovo.png",
+  "category": "network_infra"
+ },
+ {
+  "slug": "microsoft",
+  "name": "Microsoft",
+  "file": "partners/microsoft.png",
+  "category": "ai"
+ },
+ {
+  "slug": "netscout",
+  "name": "NETSCOUT",
+  "file": "partners/netscout.png",
+  "category": "network_infra"
+ },
+ {
+  "slug": "netwrix",
+  "name": "Netwrix",
+  "file": "partners/netwrix.png",
+  "category": "security"
+ },
+ {
+  "slug": "nutanix",
+  "name": "Nutanix",
+  "file": "partners/nutanix.png",
+  "category": "cloud"
+ },
+ {
+  "slug": "openai",
+  "name": "OpenAI",
+  "file": "partners/openai.png",
+  "category": "ai"
+ },
+ {
+  "slug": "extrahop",
+  "name": "ExtraHop",
+  "file": "partners/extrahop.png",
+  "category": "security"
+ },
+ {
+  "slug": "f5",
+  "name": "F5",
+  "file": "partners/f5.png",
+  "category": "network_infra"
+ },
+ {
+  "slug": "firemon",
+  "name": "FireMon",
+  "file": "partners/firemon.png",
+  "category": "security"
+ },
+ {
+  "slug": "forcepoint",
+  "name": "Forcepoint",
+  "file": "partners/forcepoint.png",
+  "category": "security"
+ },
+ {
+  "slug": "forescout",
+  "name": "Forescout",
+  "file": "partners/forescout.png",
+  "category": "security"
+ },
+ {
+  "slug": "fortinet",
+  "name": "Fortinet",
+  "file": "partners/fortinet.png",
+  "category": "security"
+ },
+ {
+  "slug": "fortra",
+  "name": "Fortra",
+  "file": "partners/fortra.png",
+  "category": "security"
+ },
+ {
+  "slug": "google",
+  "name": "Google",
+  "file": "partners/google.png",
+  "category": "ai"
+ },
+ {
+  "slug": "group_ib",
+  "name": "Group-IB",
+  "file": "partners/group_ib.png",
+  "category": "security"
+ },
+ {
+  "slug": "hpe",
+  "name": "HPE",
+  "file": "partners/hpe.png",
+  "category": "network_infra"
+ },
+ {
+  "slug": "akamai",
+  "name": "Akamai",
+  "file": "partners/akamai.png",
+  "category": "cloud"
+ },
+ {
+  "slug": "anthropic",
+  "name": "Anthropic",
+  "file": "partners/anthropic.png",
+  "category": "ai"
+ },
+ {
+  "slug": "arcon",
+  "name": "ARCON",
+  "file": "partners/arcon.png",
+  "category": "security"
+ },
+ {
+  "slug": "aws",
+  "name": "AWS",
+  "file": "partners/aws.png",
+  "category": "ai"
+ },
+ {
+  "slug": "barracuda",
+  "name": "Barracuda",
+  "file": "partners/barracuda.png",
+  "category": "security"
+ },
+ {
+  "slug": "broadcom",
+  "name": "Broadcom",
+  "file": "partners/broadcom.png",
+  "category": "network_infra"
+ },
+ {
+  "slug": "cisco",
+  "name": "Cisco",
+  "file": "partners/cisco.png",
+  "category": "network_infra"
+ },
+ {
+  "slug": "cloudflare",
+  "name": "Cloudflare",
+  "file": "partners/cloudflare.png",
+  "category": "cloud"
+ },
+ {
+  "slug": "crowdstrike",
+  "name": "CrowdStrike",
+  "file": "partners/crowdstrike.png",
+  "category": "security"
+ },
+ {
+  "slug": "delinea",
+  "name": "Delinea",
+  "file": "partners/delinea.png",
+  "category": "security"
+ }
+]
