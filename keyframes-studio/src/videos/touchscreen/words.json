@@ -1,0 +1,422 @@
+{
+  "text": "Your phone screen reacts to the lightest brush of your finger, and ignores a pen pressed as hard as you can. So what is it actually feeling? Under the glass sits a grid of tiny wires, charged with electricity. Your finger is full of water, so it pulls a little of that charge away. The phone finds the exact spot where the charge dropped. A pen is plastic. It steals nothing, so the screen never knows it's there. Follow for the next one.",
+  "audio": null,
+  "duration": 30.236,
+  "words": [
+    {
+      "word": "Your",
+      "start": 0.05,
+      "end": 0.359
+    },
+    {
+      "word": "phone",
+      "start": 0.359,
+      "end": 0.718
+    },
+    {
+      "word": "screen",
+      "start": 0.718,
+      "end": 1.127
+    },
+    {
+      "word": "reacts",
+      "start": 1.127,
+      "end": 1.536
+    },
+    {
+      "word": "to",
+      "start": 1.536,
+      "end": 1.745
+    },
+    {
+      "word": "the",
+      "start": 1.745,
+      "end": 2.005
+    },
+    {
+      "word": "lightest",
+      "start": 2.005,
+      "end": 2.514
+    },
+    {
+      "word": "brush",
+      "start": 2.514,
+      "end": 2.873
+    },
+    {
+      "word": "of",
+      "start": 2.873,
+      "end": 3.082
+    },
+    {
+      "word": "your",
+      "start": 3.082,
+      "end": 3.391
+    },
+    {
+      "word": "finger,",
+      "start": 3.391,
+      "end": 3.8
+    },
+    {
+      "word": "and",
+      "start": 4,
+      "end": 4.259
+    },
+    {
+      "word": "ignores",
+      "start": 4.259,
+      "end": 4.718
+    },
+    {
+      "word": "a",
+      "start": 4.718,
+      "end": 4.877
+    },
+    {
+      "word": "pen",
+      "start": 4.877,
+      "end": 5.136
+    },
+    {
+      "word": "pressed",
+      "start": 5.136,
+      "end": 5.595
+    },
+    {
+      "word": "as",
+      "start": 5.595,
+      "end": 5.805
+    },
+    {
+      "word": "hard",
+      "start": 5.805,
+      "end": 6.114
+    },
+    {
+      "word": "as",
+      "start": 6.114,
+      "end": 6.323
+    },
+    {
+      "word": "you",
+      "start": 6.323,
+      "end": 6.582
+    },
+    {
+      "word": "can.",
+      "start": 6.582,
+      "end": 6.841
+    },
+    {
+      "word": "So",
+      "start": 7.295,
+      "end": 7.505
+    },
+    {
+      "word": "what",
+      "start": 7.505,
+      "end": 7.814
+    },
+    {
+      "word": "is",
+      "start": 7.814,
+      "end": 8.023
+    },
+    {
+      "word": "it",
+      "start": 8.023,
+      "end": 8.232
+    },
+    {
+      "word": "actually",
+      "start": 8.232,
+      "end": 8.741
+    },
+    {
+      "word": "feeling?",
+      "start": 8.741,
+      "end": 9.2
+    },
+    {
+      "word": "Under",
+      "start": 9.654,
+      "end": 10.014
+    },
+    {
+      "word": "the",
+      "start": 10.014,
+      "end": 10.273
+    },
+    {
+      "word": "glass",
+      "start": 10.273,
+      "end": 10.632
+    },
+    {
+      "word": "sits",
+      "start": 10.632,
+      "end": 10.941
+    },
+    {
+      "word": "a",
+      "start": 10.941,
+      "end": 11.1
+    },
+    {
+      "word": "grid",
+      "start": 11.1,
+      "end": 11.409
+    },
+    {
+      "word": "of",
+      "start": 11.409,
+      "end": 11.618
+    },
+    {
+      "word": "tiny",
+      "start": 11.618,
+      "end": 11.927
+    },
+    {
+      "word": "wires,",
+      "start": 11.927,
+      "end": 12.286
+    },
+    {
+      "word": "charged",
+      "start": 12.486,
+      "end": 12.945
+    },
+    {
+      "word": "with",
+      "start": 12.945,
+      "end": 13.254
+    },
+    {
+      "word": "electricity.",
+      "start": 13.254,
+      "end": 13.914
+    },
+    {
+      "word": "Your",
+      "start": 14.368,
+      "end": 14.677
+    },
+    {
+      "word": "finger",
+      "start": 14.677,
+      "end": 15.086
+    },
+    {
+      "word": "is",
+      "start": 15.086,
+      "end": 15.295
+    },
+    {
+      "word": "full",
+      "start": 15.295,
+      "end": 15.604
+    },
+    {
+      "word": "of",
+      "start": 15.604,
+      "end": 15.814
+    },
+    {
+      "word": "water,",
+      "start": 15.814,
+      "end": 16.173
+    },
+    {
+      "word": "so",
+      "start": 16.373,
+      "end": 16.582
+    },
+    {
+      "word": "it",
+      "start": 16.582,
+      "end": 16.791
+    },
+    {
+      "word": "pulls",
+      "start": 16.791,
+      "end": 17.15
+    },
+    {
+      "word": "a",
+      "start": 17.15,
+      "end": 17.309
+    },
+    {
+      "word": "little",
+      "start": 17.309,
+      "end": 17.718
+    },
+    {
+      "word": "of",
+      "start": 17.718,
+      "end": 17.927
+    },
+    {
+      "word": "that",
+      "start": 17.927,
+      "end": 18.236
+    },
+    {
+      "word": "charge",
+      "start": 18.236,
+      "end": 18.645
+    },
+    {
+      "word": "away.",
+      "start": 18.645,
+      "end": 18.954
+    },
+    {
+      "word": "The",
+      "start": 19.409,
+      "end": 19.668
+    },
+    {
+      "word": "phone",
+      "start": 19.668,
+      "end": 20.027
+    },
+    {
+      "word": "finds",
+      "start": 20.027,
+      "end": 20.386
+    },
+    {
+      "word": "the",
+      "start": 20.386,
+      "end": 20.645
+    },
+    {
+      "word": "exact",
+      "start": 20.645,
+      "end": 21.004
+    },
+    {
+      "word": "spot",
+      "start": 21.004,
+      "end": 21.314
+    },
+    {
+      "word": "where",
+      "start": 21.314,
+      "end": 21.673
+    },
+    {
+      "word": "the",
+      "start": 21.673,
+      "end": 21.932
+    },
+    {
+      "word": "charge",
+      "start": 21.932,
+      "end": 22.341
+    },
+    {
+      "word": "dropped.",
+      "start": 22.341,
+      "end": 22.8
+    },
+    {
+      "word": "A",
+      "start": 23.254,
+      "end": 23.414
+    },
+    {
+      "word": "pen",
+      "start": 23.414,
+      "end": 23.673
+    },
+    {
+      "word": "is",
+      "start": 23.673,
+      "end": 23.882
+    },
+    {
+      "word": "plastic.",
+      "start": 23.882,
+      "end": 24.341
+    },
+    {
+      "word": "It",
+      "start": 24.795,
+      "end": 25.004
+    },
+    {
+      "word": "steals",
+      "start": 25.004,
+      "end": 25.413
+    },
+    {
+      "word": "nothing,",
+      "start": 25.413,
+      "end": 25.873
+    },
+    {
+      "word": "so",
+      "start": 26.073,
+      "end": 26.282
+    },
+    {
+      "word": "the",
+      "start": 26.282,
+      "end": 26.541
+    },
+    {
+      "word": "screen",
+      "start": 26.541,
+      "end": 26.95
+    },
+    {
+      "word": "never",
+      "start": 26.95,
+      "end": 27.309
+    },
+    {
+      "word": "knows",
+      "start": 27.309,
+      "end": 27.668
+    },
+    {
+      "word": "it's",
+      "start": 27.668,
+      "end": 27.927
+    },
+    {
+      "word": "there.",
+      "start": 27.927,
+      "end": 28.286
+    },
+    {
+      "word": "Follow",
+      "start": 28.741,
+      "end": 29.15
+    },
+    {
+      "word": "for",
+      "start": 29.15,
+      "end": 29.409
+    },
+    {
+      "word": "the",
+      "start": 29.409,
+      "end": 29.668
+    },
+    {
+      "word": "next",
+      "start": 29.668,
+      "end": 29.977
+    },
+    {
+      "word": "one.",
+      "start": 29.977,
+      "end": 30.236
+    }
+  ]
+}
