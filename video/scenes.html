@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face{font-family:Cairo;font-weight:400;src:url(fonts/cairo400.ttf)}
+@font-face{font-family:Cairo;font-weight:700;src:url(fonts/cairo700.ttf)}
+@font-face{font-family:Cairo;font-weight:800;src:url(fonts/cairo800.ttf)}
+@font-face{font-family:Inter;font-weight:500;src:url(fonts/inter500.ttf)}
+@font-face{font-family:Inter;font-weight:700;src:url(fonts/inter700.ttf)}
+:root{--navy:#061a3a;--blue:#1673ff;--cyan:#22d3e6;--red:#e2252d;--green:#00a88e}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#030b1a;font-family:Cairo,sans-serif;color:#fff}
+.abs{position:absolute}
+#stage{position:absolute;inset:0;overflow:hidden}
+#bg{position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,#0c3a7a 0%,#061a3a 45%,#020814 100%)}
+#grid{position:absolute;inset:-200px;background-image:linear-gradient(rgba(34,211,230,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,230,.07) 1px,transparent 1px);background-size:80px 80px}
+#shot{position:absolute;inset:0;width:1920px;height:1080px;object-fit:cover}
+#shade{position:absolute;inset:0}
+.scene{position:absolute;inset:0;opacity:0}
+.en{font-family:Inter,sans-serif;direction:ltr}
+/* logo mark */
+.mark{position:absolute;border-radius:50%}
+.ring{position:absolute;border-radius:50%;inset:0}
+.wordmark{font-family:Inter;font-weight:700;direction:ltr;letter-spacing:.02em}
+/* subtitles */
+#subs{position:absolute;left:0;right:0;bottom:34px;display:flex;justify-content:center}
+#subbox{background:rgba(2,8,20,.72);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:10px 34px 12px;text-align:center;max-width:1600px}
+#subar{font-size:40px;font-weight:700;line-height:1.45}
+#suben{font-family:Inter;font-weight:500;font-size:25px;color:#bcd2f2;direction:ltr;line-height:1.4}
+.card{position:absolute;background:rgba(10,30,62,.82);border:1px solid rgba(120,170,255,.25);border-radius:28px}
+.pill{display:inline-block;border-radius:999px;padding:6px 24px;font-weight:700}
+.bullet{position:absolute;font-size:40px;font-weight:700;display:flex;align-items:center;gap:20px}
+.dot{width:18px;height:18px;border-radius:50%;flex:none}
+.ttl{position:absolute;left:0;right:0;text-align:center;font-weight:800;text-shadow:0 6px 40px rgba(0,0,0,.6)}
+/* AI scene */
+.chip{display:flex;align-items:center;gap:26px;padding:0 40px;height:118px;width:820px}
+.chip .ic{width:74px;height:74px;border-radius:22px;flex:none;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,rgba(34,211,230,.25),rgba(22,115,255,.25));border:1px solid rgba(34,211,230,.5)}
+.chip .tx{font-size:40px;font-weight:700;line-height:1.2;white-space:nowrap}
+.lcard{position:absolute;background:#fff;border-radius:24px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 14px 40px rgba(0,0,0,.45)}
+.lcard img{max-width:82%;max-height:66%;object-fit:contain;display:block}
+.tag{position:absolute;left:50%;bottom:-20px;transform:translateX(-50%);font-family:Inter;font-weight:700;font-size:22px;
+  background:var(--cyan);color:#06213f;border-radius:999px;padding:2px 18px;white-space:nowrap}
+/* Partners scene */
+.mcard{position:absolute;background:#fff;border-radius:18px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 26px rgba(0,0,0,.4)}
+.mcard img{max-width:84%;max-height:72%;object-fit:contain;display:block}
+.aicard{position:absolute;border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.06);border:1px solid rgba(34,211,230,.45);box-shadow:0 14px 40px rgba(0,0,0,.45)}
+.aicard b{font-family:Inter;font-weight:700;font-size:38px;color:#fff;direction:ltr}
+.aicard small{font-family:Inter;font-weight:500;font-size:22px;color:#7fdcf0;direction:ltr}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bg"></div><div id="grid"></div>
+  <img id="shot" src="shot_a/0001.jpg">
+  <div id="shade"></div>
+
+  <!-- S1 threat -->
+  <div class="scene" id="s1">
+    <div class="abs" id="s1alert" style="top:150px;left:0;right:0;text-align:center">
+      <span class="pill en" style="background:var(--red);font-size:30px;padding:10px 34px;box-shadow:0 0 60px rgba(226,37,45,.8)">⚠ THREAT DETECTED</span>
+    </div>
+    <div class="abs" id="s1t" style="top:330px;left:0;right:0;text-align:center;font-size:96px;font-weight:800;text-shadow:0 6px 40px rgba(0,0,0,.8)">كل ثانية…</div>
+    <div class="abs" id="s1t2" style="top:480px;left:0;right:0;text-align:center;font-size:72px;font-weight:700;text-shadow:0 6px 40px rgba(0,0,0,.8)">هناك من يحاول اختراق <span style="color:#ff5a60">شركتك</span></div>
+  </div>
+
+  <!-- S2 logo -->
+  <div class="scene" id="s2">
+    <img class="abs" id="s2mark" src="logo/iris_icon.png" style="width:300px;height:300px;left:810px;top:120px;filter:drop-shadow(0 0 40px rgba(62,200,230,.55))">
+    <img class="abs" id="s2word" src="logo/iris_wordmark.png" style="width:620px;left:650px;top:450px">
+    <div class="abs" id="s2tag" style="top:735px;left:0;right:0;text-align:center;font-size:62px;font-weight:700">أمنك السيبراني… <span style="color:var(--cyan)">رؤيتنا الواضحة</span></div>
+  </div>
+
+  <!-- S3 since 2011 / offices -->
+  <div class="scene" id="s3">
+    <div class="abs" id="s3year" style="top:120px;right:140px;text-align:right">
+      <div style="font-size:44px;color:#9cc3ff;font-weight:700">منذ</div>
+      <div class="en" style="font-size:220px;font-weight:700;line-height:1;color:#fff;text-shadow:0 0 50px rgba(22,115,255,.6)">2011</div>
+      <div style="font-size:42px;font-weight:700;margin-top:24px">مُكامِل أنظمة للشركات</div>
+      <div style="font-size:42px;font-weight:700;color:var(--cyan)">في الشرق الأوسط</div>
+    </div>
+    <svg class="abs" id="s3map" width="900" height="620" style="left:110px;top:150px" viewBox="0 0 900 620">
+      <defs><radialGradient id="g1"><stop offset="0" stop-color="#22d3e6" stop-opacity=".8"/><stop offset="1" stop-color="#22d3e6" stop-opacity="0"/></radialGradient></defs>
+      <rect x="0" y="0" width="900" height="620" rx="30" fill="rgba(10,30,62,.6)" stroke="rgba(120,170,255,.25)"/>
+      <path id="s3arc" d="M250 200 Q 450 80 640 420" fill="none" stroke="#22d3e6" stroke-width="6" stroke-linecap="round" stroke-dasharray="700" stroke-dashoffset="700"/>
+      <g id="s3amman"><circle cx="250" cy="200" r="70" fill="url(#g1)"/><circle cx="250" cy="200" r="16" fill="#fff"/>
+        <text x="250" y="300" text-anchor="middle" font-family="Cairo" font-weight="800" font-size="52" fill="#fff">عمّان</text></g>
+      <g id="s3riyadh"><circle cx="640" cy="420" r="70" fill="url(#g1)"/><circle cx="640" cy="420" r="16" fill="#fff"/>
+        <text x="640" y="525" text-anchor="middle" font-family="Cairo" font-weight="800" font-size="52" fill="#fff">الرياض</text></g>
+    </svg>
+  </div>
+
+  <!-- S4 services -->
+  <div class="scene" id="s4">
+    <div class="abs" style="top:90px;left:0;right:0;text-align:center;font-size:64px;font-weight:800">ماذا نقدّم؟</div>
+    <div id="s4cards"></div>
+  </div>
+
+  <!-- S5 FortiGate -->
+  <div class="scene" id="s5">
+    <div class="card" id="s5card" style="left:160px;right:160px;top:90px;height:730px;border-top:10px solid var(--red)">
+      <div class="abs" style="top:50px;right:70px">
+        <span class="pill en" style="background:var(--red);font-size:30px">Fortinet · Platinum Partner</span>
+        <div class="en" style="font-size:120px;font-weight:700;line-height:1.2;margin-top:16px">FortiGate</div>
+        <div style="font-size:46px;font-weight:700;color:#ffb3b6">حماية الشبكة</div>
+      </div>
+      <svg class="abs" id="s5shield" width="300" height="340" viewBox="0 0 100 115" style="left:110px;top:70px">
+        <path d="M50 4 L92 20 V55 C92 82 72 102 50 111 C28 102 8 82 8 55 V20 Z" fill="rgba(226,37,45,.18)" stroke="#e2252d" stroke-width="4"/>
+        <path id="s5check" d="M30 57 L45 72 L72 40" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="80" stroke-dashoffset="80"/>
+      </svg>
+      <div class="bullet" id="s5b1" style="top:420px;right:70px"><span class="dot" style="background:var(--red)"></span>جدار حماية من الجيل التالي <span class="en" style="color:#ffb3b6;font-size:32px">NGFW</span></div>
+      <div class="bullet" id="s5b2" style="top:515px;right:70px"><span class="dot" style="background:var(--red)"></span>اتصالات آمنة للموظفين والفروع <span class="en" style="color:#ffb3b6;font-size:32px">VPN</span></div>
+      <div class="bullet" id="s5b3" style="top:610px;right:70px"><span class="dot" style="background:var(--red)"></span>ربط آمن للفروع والعمل عن بُعد <span class="en" style="color:#ffb3b6;font-size:32px">Secure SD-WAN · FortiSASE</span></div>
+    </div>
+  </div>
+
+  <!-- S6 Kaspersky -->
+  <div class="scene" id="s6">
+    <div class="card" id="s6card" style="left:160px;right:160px;top:90px;height:730px;border-top:10px solid var(--green)">
+      <div class="abs" style="top:50px;right:70px">
+        <span class="pill en" style="background:var(--green);font-size:30px">Kaspersky · Authorized Training Center</span>
+        <div class="en" style="font-size:120px;font-weight:700;line-height:1.2;margin-top:16px">Kaspersky</div>
+        <div style="font-size:46px;font-weight:700;color:#8ff0dc">حماية الأجهزة والبيانات</div>
+      </div>
+      <svg class="abs" id="s6icon" width="320" height="320" viewBox="0 0 100 100" style="left:100px;top:80px">
+        <rect x="14" y="20" width="72" height="48" rx="5" fill="rgba(0,168,142,.18)" stroke="#00a88e" stroke-width="4"/>
+        <rect x="38" y="70" width="24" height="8" fill="#00a88e"/><rect x="28" y="78" width="44" height="5" rx="2" fill="#00a88e"/>
+        <circle id="s6scan" cx="50" cy="44" r="14" fill="none" stroke="#fff" stroke-width="4"/>
+      </svg>
+      <div class="bullet" id="s6b1" style="top:420px;right:70px"><span class="dot" style="background:var(--green)"></span>حماية كل جهاز وخادم <span class="en" style="color:#8ff0dc;font-size:32px">Endpoint Security</span></div>
+      <div class="bullet" id="s6b2" style="top:515px;right:70px"><span class="dot" style="background:var(--green)"></span>كشف التهديدات والاستجابة لها <span class="en" style="color:#8ff0dc;font-size:32px">EDR / XDR</span></div>
+      <div class="bullet" id="s6b3" style="top:610px;right:70px"><span class="dot" style="background:var(--green)"></span>استخبارات التهديدات وحماية البيانات <span class="en" style="color:#8ff0dc;font-size:32px">Threat Intelligence</span></div>
+    </div>
+  </div>
+
+<!-- ===== Scene AI ===== -->
+  <div class="scene" id="sAI">
+    <svg class="abs" id="aiNet" width="1920" height="1080" style="left:0;top:0;opacity:.0"></svg>
+    <div class="abs" id="aiBadge" style="top:62px;left:0;right:0;text-align:center">
+      <span class="pill en" style="background:rgba(34,211,230,.15);border:1px solid rgba(34,211,230,.6);color:var(--cyan);font-size:26px;letter-spacing:.12em">ARTIFICIAL INTELLIGENCE</span>
+    </div>
+    <div class="ttl" id="aiTitle" style="top:110px;font-size:76px"><span style="color:var(--cyan)">الذكاء الاصطناعي</span> في قلب حلولنا</div>
+    <div class="abs en" id="aiEn" style="top:262px;left:0;right:0;text-align:center;font-size:36px;font-weight:500;letter-spacing:.04em;color:#7fdcf0">From IT to OT. From cloud to AI.</div>
+    <div id="aiChips"></div>
+    <div class="abs" id="aiCap" style="top:626px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:24px">
+      <span style="width:160px;height:2px;background:linear-gradient(90deg,transparent,rgba(34,211,230,.7))"></span>
+      <span style="font-size:36px;font-weight:700;color:#9cc3ff">نعمل مع</span>
+      <span style="width:160px;height:2px;background:linear-gradient(270deg,transparent,rgba(34,211,230,.7))"></span>
+    </div>
+    <div id="aiLogos"></div>
+  </div>
+
+  <!-- ===== Scene Partners ===== -->
+  <div class="scene" id="sPA">
+    <div class="ttl" id="paTitle" style="top:36px;font-size:64px">نعمل مع أكثر من <span class="en" style="color:var(--cyan);font-weight:700">40</span> شركة تقنية عالمية</div>
+    <div class="abs en" id="paEn" style="top:160px;left:0;right:0;text-align:center;font-size:28px;font-weight:500;letter-spacing:.08em;color:#7fdcf0">TECHNOLOGY VENDORS WE WORK WITH</div>
+    <div class="abs" id="paGrid" style="left:0;top:0;width:1920px;height:1080px"></div>
+    <div class="abs" id="paNote" style="top:872px;left:0;right:0;text-align:center;font-size:21px;color:#8fa6c8">جميع العلامات التجارية والشعارات مملوكة لأصحابها، ولا يعني عرضها شراكة رسمية أو تأييداً.</div>
+  </div>
+
+  <!-- S7 SMB vs Enterprise -->
+  <div class="scene" id="s7">
+    <div class="card" id="s7a" style="right:140px;top:110px;width:780px;height:600px;padding:50px">
+      <div style="font-size:90px">🏢</div>
+      <div style="font-size:56px;font-weight:800">الشركات الصغيرة والمتوسطة</div>
+      <div style="font-size:38px;color:#bcd2f2;margin-top:20px;line-height:1.6">جهاز FortiGate واحد + Kaspersky لكل جهاز<br>حماية بسيطة • تكلفة مناسبة • تركيب سريع</div>
+    </div>
+    <div class="card" id="s7b" style="left:140px;top:110px;width:780px;height:600px;padding:50px">
+      <div style="font-size:90px">🌐</div>
+      <div style="font-size:56px;font-weight:800">الشركات الكبرى والمؤسسات</div>
+      <div style="font-size:38px;color:#bcd2f2;margin-top:20px;line-height:1.6">تعدد الفروع • SD-WAN • EDR/XDR<br>آلاف الأجهزة • خدمات مُدارة SOC/NOC</div>
+    </div>
+    <div class="abs" id="s7c" style="top:740px;left:0;right:0;text-align:center;font-size:60px;font-weight:800;color:var(--cyan)">لدينا الحل المناسب لك</div>
+  </div>
+
+  <!-- S8 steps -->
+  <div class="scene" id="s8">
+    <div class="abs" style="top:90px;left:0;right:0;text-align:center;font-size:64px;font-weight:800">كيف نعمل</div>
+    <div id="s8steps"></div>
+  </div>
+
+  <!-- S9 closing -->
+  <div class="scene" id="s9">
+    <img class="abs" id="s9mark" src="logo/iris_logo.png" style="width:900px;left:510px;top:90px;filter:drop-shadow(0 0 30px rgba(0,0,0,.6))">
+    <div class="abs en" id="s9word" style="top:420px;left:0;right:0;text-align:center;font-size:34px;letter-spacing:.06em;color:#7fdcf0">Secure the present. Engineer what’s next.</div>
+    <div class="abs" id="s9t1" style="top:490px;left:0;right:0;text-align:center;font-size:66px;font-weight:800">لا تنتظر الهجوم القادم</div>
+    <div class="abs" id="s9t2" style="top:610px;left:0;right:0;text-align:center">
+      <span class="pill" style="background:#fff;color:#0a3f8f;font-size:44px;padding:10px 46px">تواصل معنا اليوم • <span class="en">iristechnology.me</span></span>
+      <div style="font-size:34px;color:#bcd2f2;margin-top:18px">عمّان • الرياض</div>
+    </div>
+  </div>
+
+  <div id="subs"><div id="subbox"><div id="subar"></div><div id="suben"></div></div></div>
+  <div id="flash" class="abs" style="inset:0;background:#fff;opacity:0"></div>
+</div>
+
+<script>
+const S=[[0,3.4],[3.4,8.05],[8.05,18.2],[18.2,25.55],[25.55,37.3],[37.3,44.4],[44.4,51.98],[51.98,58.3],[58.3,65.5]];
+const SUBS=[
+[0,3.35,'كل ثانية، هناك من يحاول اختراق شركتك.','Every second… someone is trying to breach your company.'],
+[3.4,8.0,'مع آيرس تكنولوجي، أمنك السيبراني يصبح رؤيتنا الواضحة.','With IRIS Technology… your cybersecurity becomes our clear vision.'],
+[8.05,12.55,'منذ عام 2011، ومن مكاتبنا في عمّان والرياض،','Since 2011, from our offices in Amman and Riyadh,'],
+[12.55,18.2,'نصمّم ونورّد وننفّذ حلول التقنية للشركات في الشرق الأوسط.','we design, supply and deliver technology solutions for businesses across the Middle East.'],
+[18.25,22.85,'من الأمن السيبراني والشبكات، إلى البنية التحتية والسحابة،','From cybersecurity and networking to infrastructure and cloud,'],
+[22.85,25.55,'والخدمات المُدارة على مدار الساعة.','and round-the-clock managed services.'],
+[25.6,28.85,'بصفتنا شريكاً بلاتينياً لشركة Fortinet،','As a Fortinet Platinum Partner,'],
+[28.85,33.43,'نحمي شبكتك بجدران الحماية FortiGate من الجيل التالي،','we protect your network with next-generation FortiGate firewalls,'],
+[33.45,37.2,'واتصالات VPN آمنة، وحلول SD-WAN.','secure VPN connectivity and SD-WAN.'],
+[37.6,40.6,'ومع Kaspersky، نحمي كل جهاز وخادم،','With Kaspersky, we protect every device and server,'],
+[40.6,44.4,'ونكشف التهديدات ونستجيب لها قبل أن تصل إلى بياناتك.','detecting and responding to threats before they reach your data.'],
+[44.4,48.32,'سواء كنت شركة ناشئة تحتاج حماية بسيطة وبتكلفة مناسبة،','Whether you are a startup needing simple, affordable protection,'],
+[48.32,51.98,'أو مؤسسة كبرى بآلاف الأجهزة، لدينا الحل المناسب لك.','or a large enterprise with thousands of devices, we have the right solution.'],
+[51.98,55.15,'نفهم مخاطرك، نصمّم الحل، ننفّذه،','We understand your risks, design the solution, deliver it,'],
+[55.15,58.3,'ثم ندرّب فريقك وندعمك باستمرار.','then train your team and support you continuously.'],
+[58.4,61.9,'آيرس تكنولوجي. لا تنتظر الهجوم القادم.','IRIS Technology… don\'t wait for the next attack.'],
+[61.9,65.5,'تواصل معنا اليوم.','Contact us today.']
+];
+const SERV=[[18.5,'🛡️','الأمن السيبراني','Cybersecurity'],[19.7,'🌐','الشبكات','Networking'],[20.9,'☁️','البنية التحتية والسحابة','Infrastructure & Cloud'],[22.9,'📡','خدمات مُدارة 24/7','Managed SOC / NOC']];
+const STEPS=[[52.1,'1','نفهم','مخاطرك'],[53.2,'2','نصمّم','الحل'],[54.3,'3','ننفّذ','باحتراف'],[55.5,'4','ندرّب وندعم','باستمرار']];
+const $=id=>document.getElementById(id);
+// build cards
+SERV.forEach((s,i)=>{const d=document.createElement('div');d.className='card';d.id='sv'+i;
+ d.style.cssText=`right:${120+i*430}px;top:260px;width:390px;height:440px;padding:40px 30px;text-align:center`;
+ d.innerHTML=`<div style="font-size:110px">${s[1]}</div><div style="font-size:44px;font-weight:800;line-height:1.3;margin-top:10px">${s[2]}</div><div class="en" style="font-size:28px;color:#9cc3ff;margin-top:12px">${s[3]}</div>`;$('s4cards').appendChild(d);});
+STEPS.forEach((s,i)=>{const d=document.createElement('div');d.className='card';d.id='st'+i;
+ d.style.cssText=`right:${120+i*430}px;top:290px;width:390px;height:380px;padding:40px 30px;text-align:center`;
+ d.innerHTML=`<div class="en" style="width:110px;height:110px;border-radius:50%;margin:0 auto;background:var(--cyan);color:#06213f;font-size:64px;font-weight:700;line-height:110px">${s[1]}</div><div style="font-size:58px;font-weight:800;margin-top:26px">${s[2]}</div><div style="font-size:40px;color:#9cc3ff">${s[3]}</div>`;$('s8steps').appendChild(d);});
+
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const ease=x=>{x=clamp(x);return 1-Math.pow(1-x,3)};
+const inOut=(t,a,d=.5)=>ease((t-a)/d);
+const back=x=>{x=clamp(x);const c1=1.6,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+function sceneAlpha(t,[a,b]){return clamp(Math.min((t-a)/.35,(b-t)/.35+1))}
+function pop(el,t,a,dy=40,d=.55){const k=inOut(t,a,d);el.style.opacity=k;el.style.transform=`translateY(${(1-k)*dy}px) scale(${.96+.04*k})`;}
+
+/* ---------- AI scene build ---------- */
+const ICONS={
+ shield:'<path d="M24 5 L40 11 V24 C40 34 33 41 24 44 C15 41 8 34 8 24 V11 Z" fill="none" stroke="#22d3e6" stroke-width="3.2" stroke-linejoin="round"/><circle cx="24" cy="24" r="4" fill="#fff"/><path d="M24 24 L32 18 M24 24 L16 18 M24 24 V33" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>',
+ gear:'<circle cx="24" cy="24" r="7" fill="none" stroke="#fff" stroke-width="3"/><path d="M24 6v6M24 36v6M6 24h6M36 24h6M11.3 11.3l4.2 4.2M32.5 32.5l4.2 4.2M11.3 36.7l4.2-4.2M32.5 15.5l4.2-4.2" stroke="#22d3e6" stroke-width="3.4" stroke-linecap="round"/>',
+ chart:'<path d="M8 40 H42" stroke="#22d3e6" stroke-width="3" stroke-linecap="round"/><rect x="11" y="26" width="6" height="11" rx="1.5" fill="#22d3e6"/><rect x="21" y="18" width="6" height="19" rx="1.5" fill="#1673ff"/><rect x="31" y="10" width="6" height="27" rx="1.5" fill="#fff"/>',
+ chat:'<path d="M8 10 H40 V31 H22 L13 39 V31 H8 Z" fill="none" stroke="#22d3e6" stroke-width="3.2" stroke-linejoin="round"/><circle cx="17" cy="20.5" r="2.6" fill="#fff"/><circle cx="24" cy="20.5" r="2.6" fill="#fff"/><circle cx="31" cy="20.5" r="2.6" fill="#fff"/>'
+};
+const CHIPS=[['shield','كشف التهديدات بالذكاء الاصطناعي'],['gear','أتمتة العمليات'],['chart','تحليل البيانات'],['chat','مساعدات ذكية للأعمال']];
+CHIPS.forEach((c,i)=>{const d=document.createElement('div');d.className='card chip';d.id='aic'+i;
+  const col=i%2,row=Math.floor(i/2);
+  d.style.cssText=`${col===0?'right':'left'}:120px;top:${340+row*140}px`;
+  d.innerHTML=`<div class="ic"><svg width="48" height="48" viewBox="0 0 48 48">${ICONS[c[0]]}</svg></div><div class="tx">${c[1]}</div>`;
+  $('aiChips').appendChild(d);});
+const AIV=[['Claude','by Anthropic'],['OpenAI'],['Google'],['Microsoft'],['AWS'],['IBM']];
+const LW=240,LH=136,LG=28,LX0=(1920-(6*LW+5*LG))/2;
+AIV.forEach((v,i)=>{const d=document.createElement('div');d.className='lcard';d.id='ail'+i;
+  d.style.cssText=`right:${LX0+i*(LW+LG)}px;top:692px;width:${LW}px;height:${LH}px`;
+  d.className='aicard'; d.innerHTML=`<b>${v[0]}</b>`+(v[1]?`<small>${v[1]}</small>`:'');
+  $('aiLogos').appendChild(d);});
+// neural net decoration (deterministic pseudo-random)
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+const NODES=[];for(let i=0;i<34;i++)NODES.push([rnd()*1920,40+rnd()*840,rnd()*6.28]);
+(function(){let s='';const E=[];
+ NODES.forEach((a,i)=>NODES.forEach((b,j)=>{if(j>i&&Math.hypot(a[0]-b[0],a[1]-b[1])<300)E.push([i,j])}));
+ E.forEach(([i,j],k)=>s+=`<line id="ae${k}" x1="${NODES[i][0]}" y1="${NODES[i][1]}" x2="${NODES[j][0]}" y2="${NODES[j][1]}" stroke="#22d3e6" stroke-width="1.2"/>`);
+ NODES.forEach((n,i)=>s+=`<circle id="an${i}" cx="${n[0]}" cy="${n[1]}" r="4" fill="#22d3e6"/>`);
+ $('aiNet').innerHTML=s;window._aiE=E;})();
+
+
+
+function renderAI(t){
+  $('aiNet').style.opacity=.10+.18*inOut(t,0,1.5);
+  NODES.forEach((n,i)=>{$('an'+i).setAttribute('opacity',.35+.65*Math.abs(Math.sin(t*1.3+n[2])));});
+  _aiE.forEach((e,k)=>{$('ae'+k).setAttribute('opacity',.25+.55*Math.max(0,Math.sin(t*1.1+k*.7)));});
+  pop($('aiBadge'),t,.05,20);
+  pop($('aiTitle'),t,.2,50,.6);
+  pop($('aiEn'),t,.75,30);
+  CHIPS.forEach((c,i)=>{const a=1.1+i*.35, k=back((t-a)/.6), k2=clamp((t-a)/.35);
+    const el=$('aic'+i); el.style.opacity=k2;
+    const drift=Math.sin(t*1.1+i*1.7)*4*clamp(t-a-.6);
+    el.style.transform=`translateY(${(1-k)*50+drift}px) scale(${.9+.1*k})`;
+    el.style.boxShadow=`0 0 ${30*Math.max(0,1-Math.abs(t-a-.45)/.5)}px rgba(34,211,230,.6)`;});
+  pop($('aiCap'),t,2.6,24);
+  AIV.forEach((v,i)=>{const a=2.85+i*.17, k=back((t-a)/.55), k2=clamp((t-a)/.3);
+    const el=$('ail'+i); el.style.opacity=k2;
+    const drift=Math.sin(t*1.4+i*1.1)*5*clamp(t-a-.55);
+    el.style.transform=`translateY(${(1-k)*60+drift}px) scale(${.7+.3*k})`;});
+}
+
+/* ---------- Partners scene build ---------- */
+const PARTNERS=[
+ ['fortinet','Fortinet','#e2252d'],['kaspersky','Kaspersky','#00a88e'],
+ ['paloalto'],['cisco'],['microsoft'],['google'],['aws'],
+ ['ibm'],['huawei'],['crowdstrike'],['trellix'],['f5'],
+ ['akamai'],['cloudflare'],['broadcom'],['hpe'],['lenovo'],['nutanix'],['proofpoint'],
+ ['forcepoint'],['forescout'],['sailpoint'],['recorded_future'],['group_ib'],['barracuda'],['delinea'],
+ ['netscout'],['extrahop'],['firemon'],['netwrix'],['opentext'],['quest'],['paessler_prtg'],
+ ['schneider'],['hikvision'],['seclore'],['phishrod'],['arcon'],['fortra']
+];
+const COLS=7,CW=222,CH=92,GX=18,GY=14,GTOP=214,GX0=(1920-(COLS*CW+(COLS-1)*GX))/2;
+const NROWS=Math.ceil(PARTNERS.length/COLS);
+PARTNERS.forEach((p,i)=>{const r=Math.floor(i/COLS),c=i%COLS;
+  const inRow=Math.min(COLS,PARTNERS.length-r*COLS), off=(COLS-inRow)*(CW+GX)/2;
+  const d=document.createElement('div');d.className='mcard';d.id='pm'+i;
+  d.style.cssText=`right:${GX0+off+c*(CW+GX)}px;top:${GTOP+r*(CH+GY)}px;width:${CW}px;height:${CH}px`;
+  if(p[2]){d.style.outline=`5px solid ${p[2]}`;d.style.outlineOffset='3px';}
+  d.innerHTML=`<img src="partners/${p[0]}.png" alt="${p[1]||p[0]}">`;
+  d._r=r;d._c=c;d._hl=p[2];$('paGrid').appendChild(d);});
+
+function renderPartners(t){
+  pop($('paTitle'),t,.1,50,.6);
+  pop($('paEn'),t,.5,24);
+  const gd=clamp(t-3.8);
+  $('paGrid').style.transform=`translateX(${Math.sin(t*.5)*8*gd}px)`;
+  PARTNERS.forEach((p,i)=>{const el=$('pm'+i);
+    // diagonal sweep from top-right (RTL reading start)
+    const a=p[2]?0.75+i*.25:1.15+el._c*.2+el._r*.22;
+    const k=back((t-a)/.5), k2=clamp((t-a)/.25);
+    el.style.opacity=k2;
+    const drift=Math.sin(t*1.2+i*.9)*3*clamp(t-a-.5);
+    let sc=.6+.4*k;
+    const hk=(window.PA_HL&&PA_HL[p[0]]!==undefined)?Math.max(0,1-Math.abs(t-PA_HL[p[0]]-.25)/.6):0;
+    if(hk>0&&!p[2]){sc*=1+.08*hk;el.style.boxShadow=`0 10px 26px rgba(0,0,0,.4),0 0 ${30*hk}px #22d3e6`;el.style.zIndex=3;} else if(!p[2]){el.style.boxShadow='';el.style.zIndex='';}
+    if(p[2]){const g=.5+.5*Math.sin((t-3.4)*3.2);const on=clamp((t-3.2)/.5);
+      sc*=1+.04*on;
+      el.style.boxShadow=`0 10px 26px rgba(0,0,0,.4),0 0 ${12+28*on*g}px ${p[2]}`;
+      el.style.zIndex=2;}
+    el.style.transform=`translateY(${-(1-k)*30+drift}px) scale(${sc})`;});
+}
+
+
+let shotA=96, shotB=182;
+function renderOld(t){
+  // background / AI shot
+  const shot=$('shot'), shade=$('shade');
+  if(t<3.4){shot.style.display='block';shot.src=`shot_a/${String(Math.min(shotA,Math.floor(t*25)+1)).padStart(4,'0')}.jpg`;
+    shade.style.background=`radial-gradient(ellipse at center,rgba(0,0,0,.15) 30%,rgba(120,0,10,${.35+.25*Math.abs(Math.sin(t*5))}) 100%)`;
+    shot.style.opacity=t>3.0?1-(t-3.0)/.4:1;}
+  else if(t>=58.3){shot.style.display='block';shot.src=`shot_b/${String(Math.min(shotB,Math.floor((t-58.3)*25)+1)).padStart(4,'0')}.jpg`;
+    shot.style.opacity=clamp((t-58.3)/.5);shade.style.background='linear-gradient(rgba(2,8,20,.55),rgba(2,8,20,.8))';}
+  else {shot.style.display='none';shade.style.background='none';}
+  $('grid').style.transform=`translate(${(t*12)%80}px,${(t*6)%80}px)`;
+  // scenes
+  S.forEach((r,i)=>{$('s'+(i+1)).style.opacity=sceneAlpha(t,r)});
+  // S1
+  $('s1alert').style.opacity=(Math.floor(t*3)%2===0||t>1.5)?1:.35;
+  pop($('s1t'),t,.1); pop($('s1t2'),t,1.0);
+  // S2
+  const k2=inOut(t,3.45,.9); $('s2mark').style.transform=`scale(${.4+.6*k2}) rotate(${(1-k2)*-120+Math.sin(t*1.5)*3}deg)`;$('s2mark').style.opacity=k2;
+  
+  pop($('s2word'),t,3.9); pop($('s2tag'),t,4.9);
+  // S3
+  pop($('s3year'),t,8.1,60,.8);
+  $('s3amman').style.opacity=inOut(t,11.3,.4); $('s3riyadh').style.opacity=inOut(t,11.8,.4);
+  $('s3arc').style.strokeDashoffset=700*(1-inOut(t,12.1,1.2));
+  $('s3map').style.opacity=inOut(t,10.2,.5);
+  // S4
+  SERV.forEach((s,i)=>pop($('sv'+i),t,s[0],60));
+  // S5
+  pop($('s5card'),t,25.6,50,.6);
+  $('s5check').style.strokeDashoffset=80*(1-inOut(t,27.0,.6));
+  pop($('s5b1'),t,30.1);pop($('s5b2'),t,33.5);pop($('s5b3'),t,35.5);
+  // S6
+  pop($('s6card'),t,37.35,50,.6);
+  $('s6scan').setAttribute('r',10+6*Math.abs(Math.sin(t*2.5)));
+  pop($('s6b1'),t,38.9);pop($('s6b2'),t,40.6);pop($('s6b3'),t,42.8);
+  // S7
+  pop($('s7a'),t,44.5,60);pop($('s7b'),t,48.4,60);pop($('s7c'),t,50.5);
+  // S8
+  STEPS.forEach((s,i)=>pop($('st'+i),t,s[0],60));
+  // S9
+  const k9=inOut(t,58.4,.9);$('s9mark').style.opacity=k9;$('s9mark').style.transform=`scale(${.5+.5*k9})`;
+  
+  pop($('s9word'),t,58.9);pop($('s9t1'),t,59.85);pop($('s9t2'),t,62.0);
+  // flash on logo reveals
+  $('flash').style.opacity=Math.max(0,.35-Math.abs(t-3.45)*1.4,.2-Math.abs(t-58.4)*1.2);
+  // subtitles
+  const c=SUBS.find(s=>t>=s[0]&&t<s[1]);
+  $('subs').style.opacity=c?1:0;
+  if(c){$('subar').textContent=c[2];$('suben').textContent=c[3];}
+}
+// inserted AI + partners block (times relative to the final narration)
+const INS0=44.41;            // where the block starts
+let INSD=23.16, AI_D=11.4;   // block duration and AI-scene duration
+let NEW_SUBS=[               // [start,end,ar,en] in block-local seconds
+ [0.45,6.83,'وفي عصر الذكاء الاصطناعي‏،‏ نوفّر حلول Claude من Anthropic‏،‏ OpenAI‏،‏ Google‏،‏ Microsoft‏،‏','In the age of AI, we deliver solutions from Claude by Anthropic, OpenAI, Google and Microsoft,'],
+ [6.83,11.4,'لأتمتة العمليات‏،‏ وتسريع كشف التهديدات‏،‏ وتحليل البيانات.','to automate operations, accelerate threat detection and analyze data.'],
+ [11.6,18.54,'ونعمل مع أكثر من 40 شركة تقنية عالمية‏،‏ من Cisco‏،‏ Palo Alto Networks‏،‏ AWS‏،‏','We work with more than 40 global technology companies, from Cisco, Palo Alto Networks and AWS,'],
+ [18.54,23.16,'إلى IBM‏،‏ Huawei‏،‏ CrowdStrike‏،‏ لنختار لك الأنسب.','to IBM, Huawei and CrowdStrike, to choose what fits you best.']];
+window.PA_HL={cisco:3.70,paloalto:4.33,aws:5.85,ibm:7.47,huawei:8.08,crowdstrike:8.60};
+function render(t){
+  const inBlock=t>=INS0&&t<INS0+INSD;
+  if(!inBlock){renderOld(t<INS0?t:t-INSD);$('sAI').style.opacity=0;$('sPA').style.opacity=0;return;}
+  renderOld(INS0-0.001); S.forEach((r,i)=>{$('s'+(i+1)).style.opacity=0});
+  $('flash').style.opacity=0;
+  const lt=t-INS0, fade=(a,b,x)=>clamp(Math.min((x-a)/.35,(b-x)/.35+1));
+  $('sAI').style.opacity=fade(0,AI_D,lt); $('sPA').style.opacity=fade(AI_D,INSD,lt);
+  renderAI(lt); renderPartners(lt-AI_D);
+  $('grid').style.transform=`translate(${(t*12)%80}px,${(t*6)%80}px)`;
+  const c=NEW_SUBS.find(s=>lt>=s[0]&&lt<s[1]);
+  $('subs').style.opacity=c?1:0; if(c){$('subar').textContent=c[2];$('suben').textContent=c[3];}
+}
+window.render=render;
+render(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IRIS Technology</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --ink:#0b1b33; --muted:#51607a;
+  --brand:#0a63d8; --brand2:#00b3c7; --line:#dde5f0;
+  --forti:#d9272e; --kasp:#00a88e;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#071224; --surface:#0d1d36; --ink:#eaf1ff; --muted:#9fb0cc;
+    --brand:#3f8cff; --brand2:#22d3e6; --line:#1d3256;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#071224; --surface:#0d1d36; --ink:#eaf1ff; --muted:#9fb0cc;
+  --brand:#3f8cff; --brand2:#22d3e6; --line:#1d3256;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Cairo",system-ui,sans-serif;line-height:1.75}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+header{padding:20px 0}
+.logo{display:flex;align-items:center;gap:12px;font-weight:800;font-size:1.4rem;direction:ltr}
+.logo img{height:44px;display:none}
+.mark{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 50% 50%,var(--ink) 0 18%,var(--brand2) 19% 42%,var(--brand) 43% 70%,transparent 71%);border:2px solid var(--brand)}
+.logo small{display:block;font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.2em}
+.hero{background:linear-gradient(135deg,#061a3a,#0a3f8f 60%,#007f93);color:#fff;border-radius:24px;padding:56px 32px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:auto -80px -120px auto;width:360px;height:360px;border-radius:50%;border:40px solid rgba(255,255,255,.06)}
+.hero h1{font-size:clamp(1.8rem,5vw,3rem);margin:0 0 12px;line-height:1.3}
+.hero p{font-size:1.15rem;max-width:620px;opacity:.92;margin:0 0 24px}
+.cta{display:inline-block;background:#fff;color:#0a3f8f;font-weight:800;padding:12px 28px;border-radius:999px;text-decoration:none}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.tags span{background:rgba(255,255,255,.12);padding:4px 14px;border-radius:999px;font-size:.9rem}
+h2{font-size:1.6rem;margin:56px 0 8px}
+.lead{color:var(--muted);margin:0 0 24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px}
+.card h3{margin:0 0 6px;font-size:1.15rem}
+.card p,.card li{color:var(--muted);margin:0}
+.card ul{margin:8px 0 0;padding-inline-start:20px}
+.vendor{border-top:5px solid var(--forti)}
+.vendor.k{border-top-color:var(--kasp)}
+.vendor .badge{display:inline-block;font-size:.8rem;font-weight:700;color:#fff;background:var(--forti);padding:2px 12px;border-radius:999px;margin-bottom:8px}
+.vendor.k .badge{background:var(--kasp)}
+table{width:100%;border-collapse:collapse;background:var(--surface);border-radius:18px;overflow:hidden;border:1px solid var(--line)}
+th,td{padding:14px;text-align:start;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--brand);color:#fff}
+.steps{counter-reset:s}
+.steps .card{position:relative;padding-top:48px}
+.steps .card::before{counter-increment:s;content:counter(s);position:absolute;top:16px;inset-inline-start:22px;width:28px;height:28px;border-radius:50%;background:var(--brand2);color:#06213f;font-weight:800;display:grid;place-items:center}
+.final{margin:56px 0;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:40px 20px}
+.final h2{margin-top:0}
+footer{color:var(--muted);font-size:.85rem;text-align:center;padding:0 0 32px}
+.table-wrap{overflow-x:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">
+      <img src="logo.png" alt="IRIS Technology — Enrich your technology vision" style="display:block;height:64px;background:#061a3a;border-radius:12px;padding:8px 14px">
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>أمنك السيبراني… رؤيتنا الواضحة</h1>
+    <p>IRIS Technology — مُكامِل أنظمة (System Integrator) يخدم الشركات في الشرق الأوسط منذ 2011 من مكاتبه في عمّان والرياض. نحمي أعمالك بحلول <b>FortiGate</b> و<b>Kaspersky</b>، سواء كنت شركة ناشئة أو مؤسسة كبرى.</p>
+    <a class="cta" href="https://www.iristechnology.me">اطلب تقييماً أمنياً لشركتك</a>
+    <div class="tags"><span>Fortinet Platinum Partner</span><span>Kaspersky Authorized Training Center</span><span>عمّان • الرياض</span></div>
+    <p style="margin:18px 0 0;font-size:.95rem;opacity:.85;direction:ltr;text-align:right">Secure the present. Engineer what’s next. — Human expertise. Machine intelligence. Regional impact.</p>
+  </section>
+
+  <h2>ماذا نقدّم؟</h2>
+  <p class="lead">نصمّم ونورّد ونركّب وندير البنية التقنية للشركات من البداية إلى النهاية.</p>
+  <div class="grid">
+    <div class="card"><h3>🛡️ الأمن السيبراني</h3><p>جدران الحماية، حماية الأجهزة الطرفية، تقييم المخاطر، اختبار الاختراق، والاستجابة للحوادث.</p></div>
+    <div class="card"><h3>🌐 الشبكات</h3><p>شبكات المؤسسات، SD-WAN، الشبكات اللاسلكية الآمنة وربط الفروع.</p></div>
+    <div class="card"><h3>🖥️ البنية التحتية والسحابة</h3><p>الخوادم، التخزين والنسخ الاحتياطي، وحلول IaaS / PaaS / SaaS.</p></div>
+    <div class="card"><h3>📡 الخدمات المُدارة</h3><p>مراقبة وتشغيل عبر SOC / NOC ودعم فني متواصل.</p></div>
+    <div class="card"><h3>🎓 IRIS Academy</h3><p>تدريب معتمد يقدّمه خبراء منتجات داخل الشركة لفرق عملائنا.</p></div>
+  </div>
+
+  <h2>تركيزنا: الأمن السيبراني</h2>
+  <p class="lead">شراكتان استراتيجيتان تغطيان طبقتي الحماية الأهم: الشبكة والأجهزة.</p>
+  <div class="grid">
+    <div class="card vendor">
+      <span class="badge">Fortinet • Platinum Partner</span>
+      <h3>FortiGate — حماية الشبكة</h3>
+      <ul>
+        <li>جدار حماية من الجيل التالي (NGFW) يكشف التهديدات ويمنعها.</li>
+        <li>VPN آمن للموظفين عن بُعد والفروع.</li>
+        <li>Secure SD-WAN للفروع، وFortiSASE للعمل الآمن من أي مكان.</li>
+        <li>تكامل مع Fortinet Security Fabric وحلول SOC.</li>
+      </ul>
+    </div>
+    <div class="card vendor k">
+      <span class="badge">Kaspersky • Authorized Training Center</span>
+      <h3>Kaspersky — حماية الأجهزة والبيانات</h3>
+      <ul>
+        <li>حماية الأجهزة الطرفية (Endpoint Security) والخوادم.</li>
+        <li>كشف التهديدات والاستجابة لها (EDR / XDR).</li>
+        <li>استخبارات التهديدات (Threat Intelligence).</li>
+        <li>توعية الموظفين أمنياً وتدريب معتمد.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>الذكاء الاصطناعي في قلب حلولنا</h2>
+  <p class="lead">From IT to OT. From cloud to AI. — نوفّر حلول الذكاء الاصطناعي من Claude (Anthropic) وOpenAI وGoogle وMicrosoft لأتمتة العمليات، وتسريع كشف التهديدات، وتحليل البيانات.</p>
+  <div class="grid">
+    <div class="card"><h3>🛡️ كشف التهديدات بالذكاء الاصطناعي</h3><p>رصد أسرع للهجمات وتقليل الإنذارات الكاذبة.</p></div>
+    <div class="card"><h3>⚙️ أتمتة العمليات</h3><p>توفير وقت فرق التقنية والأمن في المهام المتكررة.</p></div>
+    <div class="card"><h3>📊 تحليل البيانات</h3><p>تحويل بياناتك إلى قرارات واضحة.</p></div>
+    <div class="card"><h3>💬 مساعدات ذكية للأعمال</h3><p>مساعدات مبنية على نماذج لغوية حديثة لخدمة فرقك وعملائك.</p></div>
+  </div>
+
+  <h2>نعمل مع أكثر من 40 شركة تقنية عالمية</h2>
+  <p class="lead">منها Fortinet وKaspersky وCisco وPalo Alto Networks وMicrosoft وGoogle وAWS وIBM وHuawei وCrowdStrike وTrellix وProofpoint وغيرها، لنختار لك الحل الأنسب.</p>
+  <p style="color:var(--muted);font-size:.8rem;margin-top:-12px">جميع العلامات التجارية مملوكة لأصحابها، ولا يعني ذكرها شراكة رسمية أو تأييداً، باستثناء ما يُذكر صراحةً.</p>
+
+  <h2>حل مناسب لكل حجم</h2>
+  <div class="table-wrap">
+  <table>
+    <tr><th></th><th>الشركات الصغيرة والمتوسطة</th><th>الشركات الكبرى والمؤسسات</th></tr>
+    <tr><td><b>FortiGate</b></td><td>جهاز واحد يجمع جدار الحماية وVPN وفلترة الويب بتكلفة مناسبة وإدارة بسيطة.</td><td>معمارية متعددة الفروع، SD-WAN، توافر عالٍ، وتكامل مع SOC وFortiSASE.</td></tr>
+    <tr><td><b>Kaspersky</b></td><td>حماية سهلة لكل جهاز وخادم من لوحة تحكم واحدة، ضد برامج الفدية والتصيّد.</td><td>EDR / XDR، استخبارات التهديدات، وحماية مركزية لآلاف الأجهزة.</td></tr>
+    <tr><td><b>IRIS</b></td><td>تركيب سريع، دعم محلي، وتدريب لفريقك.</td><td>تصميم مخصّص، خدمات مُدارة، ودعم فني على مدار الساعة.</td></tr>
+  </table>
+  </div>
+
+  <h2>كيف نعمل</h2>
+  <div class="grid steps">
+    <div class="card"><h3>نفهم</h3><p>نقيّم بيئتك ومخاطرك الفعلية.</p></div>
+    <div class="card"><h3>نصمّم</h3><p>حلاً مبنيّاً على أفضل المورّدين ومناسب لميزانيتك.</p></div>
+    <div class="card"><h3>ننفّذ</h3><p>توريد وتركيب وتهيئة بيد خبراء معتمدين.</p></div>
+    <div class="card"><h3>نُمكِّن وندعم</h3><p>تدريب فريقك، مراقبة مستمرة، ودعم دائم.</p></div>
+  </div>
+
+  <section class="final">
+    <h2>لا تنتظر الهجوم القادم</h2>
+    <p class="lead">تواصل مع IRIS Technology اليوم واحصل على تقييم أمني لشركتك.</p>
+    <a class="cta" style="background:var(--brand);color:#fff" href="https://www.iristechnology.me">iristechnology.me</a>
+  </section>
+  <footer>IRIS Technology — عمّان • الرياض</footer>
+</div>
+</body>
+</html>

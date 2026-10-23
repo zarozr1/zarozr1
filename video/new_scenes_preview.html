@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>IRIS New Scenes</title>
+<style>
+@font-face{font-family:Cairo;font-weight:400;src:url(fonts/cairo400.ttf)}
+@font-face{font-family:Cairo;font-weight:700;src:url(fonts/cairo700.ttf)}
+@font-face{font-family:Cairo;font-weight:800;src:url(fonts/cairo800.ttf)}
+@font-face{font-family:Inter;font-weight:500;src:url(fonts/inter500.ttf)}
+@font-face{font-family:Inter;font-weight:700;src:url(fonts/inter700.ttf)}
+:root{--navy:#061a3a;--blue:#1673ff;--cyan:#22d3e6;--red:#e2252d;--green:#00a88e}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#030b1a;font-family:Cairo,sans-serif;color:#fff}
+.abs{position:absolute}
+#stage{position:absolute;inset:0;overflow:hidden}
+#bg{position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,#0c3a7a 0%,#061a3a 45%,#020814 100%)}
+#grid{position:absolute;inset:-200px;background-image:linear-gradient(rgba(34,211,230,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,230,.07) 1px,transparent 1px);background-size:80px 80px}
+.scene{position:absolute;inset:0;opacity:0}
+.en{font-family:Inter,sans-serif;direction:ltr}
+.card{position:absolute;background:rgba(10,30,62,.82);border:1px solid rgba(120,170,255,.25);border-radius:28px}
+.pill{display:inline-block;border-radius:999px;padding:6px 24px;font-weight:700}
+.ttl{position:absolute;left:0;right:0;text-align:center;font-weight:800;text-shadow:0 6px 40px rgba(0,0,0,.6)}
+/* AI scene */
+.chip{display:flex;align-items:center;gap:26px;padding:0 40px;height:118px;width:820px}
+.chip .ic{width:74px;height:74px;border-radius:22px;flex:none;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,rgba(34,211,230,.25),rgba(22,115,255,.25));border:1px solid rgba(34,211,230,.5)}
+.chip .tx{font-size:40px;font-weight:700;line-height:1.2;white-space:nowrap}
+.lcard{position:absolute;background:#fff;border-radius:24px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 14px 40px rgba(0,0,0,.45)}
+.lcard img{max-width:82%;max-height:66%;object-fit:contain;display:block}
+.tag{position:absolute;left:50%;bottom:-20px;transform:translateX(-50%);font-family:Inter;font-weight:700;font-size:22px;
+  background:var(--cyan);color:#06213f;border-radius:999px;padding:2px 18px;white-space:nowrap}
+/* Partners scene */
+.mcard{position:absolute;background:#fff;border-radius:18px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 26px rgba(0,0,0,.4)}
+.mcard img{max-width:84%;max-height:72%;object-fit:contain;display:block}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bg"></div><div id="grid"></div>
+
+  <!-- ===== Scene AI ===== -->
+  <div class="scene" id="sAI">
+    <svg class="abs" id="aiNet" width="1920" height="1080" style="left:0;top:0;opacity:.0"></svg>
+    <div class="abs" id="aiBadge" style="top:62px;left:0;right:0;text-align:center">
+      <span class="pill en" style="background:rgba(34,211,230,.15);border:1px solid rgba(34,211,230,.6);color:var(--cyan);font-size:26px;letter-spacing:.12em">ARTIFICIAL INTELLIGENCE</span>
+    </div>
+    <div class="ttl" id="aiTitle" style="top:110px;font-size:76px"><span style="color:var(--cyan)">الذكاء الاصطناعي</span> في قلب حلولنا</div>
+    <div class="abs en" id="aiEn" style="top:262px;left:0;right:0;text-align:center;font-size:36px;font-weight:500;letter-spacing:.04em;color:#7fdcf0">From IT to OT. From cloud to AI.</div>
+    <div id="aiChips"></div>
+    <div class="abs" id="aiCap" style="top:626px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:24px">
+      <span style="width:160px;height:2px;background:linear-gradient(90deg,transparent,rgba(34,211,230,.7))"></span>
+      <span style="font-size:36px;font-weight:700;color:#9cc3ff">نعمل مع</span>
+      <span style="width:160px;height:2px;background:linear-gradient(270deg,transparent,rgba(34,211,230,.7))"></span>
+    </div>
+    <div id="aiLogos"></div>
+  </div>
+
+  <!-- ===== Scene Partners ===== -->
+  <div class="scene" id="sPA">
+    <div class="ttl" id="paTitle" style="top:36px;font-size:64px">نعمل مع أكثر من <span class="en" style="color:var(--cyan);font-weight:700">40</span> شركة تقنية عالمية</div>
+    <div class="abs en" id="paEn" style="top:160px;left:0;right:0;text-align:center;font-size:28px;font-weight:500;letter-spacing:.08em;color:#7fdcf0">GLOBAL TECHNOLOGY PARTNERS</div>
+    <div class="abs" id="paGrid" style="left:0;top:0;width:1920px;height:1080px"></div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const ease=x=>{x=clamp(x);return 1-Math.pow(1-x,3)};
+const back=x=>{x=clamp(x);const c1=1.6,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+const inOut=(t,a,d=.5)=>ease((t-a)/d);
+
+/* ---------- AI scene build ---------- */
+const ICONS={
+ shield:'<path d="M24 5 L40 11 V24 C40 34 33 41 24 44 C15 41 8 34 8 24 V11 Z" fill="none" stroke="#22d3e6" stroke-width="3.2" stroke-linejoin="round"/><circle cx="24" cy="24" r="4" fill="#fff"/><path d="M24 24 L32 18 M24 24 L16 18 M24 24 V33" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>',
+ gear:'<circle cx="24" cy="24" r="7" fill="none" stroke="#fff" stroke-width="3"/><path d="M24 6v6M24 36v6M6 24h6M36 24h6M11.3 11.3l4.2 4.2M32.5 32.5l4.2 4.2M11.3 36.7l4.2-4.2M32.5 15.5l4.2-4.2" stroke="#22d3e6" stroke-width="3.4" stroke-linecap="round"/>',
+ chart:'<path d="M8 40 H42" stroke="#22d3e6" stroke-width="3" stroke-linecap="round"/><rect x="11" y="26" width="6" height="11" rx="1.5" fill="#22d3e6"/><rect x="21" y="18" width="6" height="19" rx="1.5" fill="#1673ff"/><rect x="31" y="10" width="6" height="27" rx="1.5" fill="#fff"/>',
+ chat:'<path d="M8 10 H40 V31 H22 L13 39 V31 H8 Z" fill="none" stroke="#22d3e6" stroke-width="3.2" stroke-linejoin="round"/><circle cx="17" cy="20.5" r="2.6" fill="#fff"/><circle cx="24" cy="20.5" r="2.6" fill="#fff"/><circle cx="31" cy="20.5" r="2.6" fill="#fff"/>'
+};
+const CHIPS=[['shield','كشف التهديدات بالذكاء الاصطناعي'],['gear','أتمتة العمليات'],['chart','تحليل البيانات'],['chat','مساعدات ذكية للأعمال']];
+CHIPS.forEach((c,i)=>{const d=document.createElement('div');d.className='card chip';d.id='aic'+i;
+  const col=i%2,row=Math.floor(i/2);
+  d.style.cssText=`${col===0?'right':'left'}:120px;top:${340+row*140}px`;
+  d.innerHTML=`<div class="ic"><svg width="48" height="48" viewBox="0 0 48 48">${ICONS[c[0]]}</svg></div><div class="tx">${c[1]}</div>`;
+  $('aiChips').appendChild(d);});
+const AIV=[['anthropic','Anthropic','Claude'],['openai','OpenAI'],['google','Google'],['microsoft','Microsoft'],['aws','AWS'],['ibm','IBM']];
+const LW=240,LH=136,LG=28,LX0=(1920-(6*LW+5*LG))/2;
+AIV.forEach((v,i)=>{const d=document.createElement('div');d.className='lcard';d.id='ail'+i;
+  d.style.cssText=`right:${LX0+i*(LW+LG)}px;top:692px;width:${LW}px;height:${LH}px`;
+  d.innerHTML=`<img src="partners/${v[0]}.png" alt="${v[1]}">`+(v[2]?`<span class="tag">${v[2]}</span>`:'');
+  $('aiLogos').appendChild(d);});
+// neural net decoration (deterministic pseudo-random)
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+const NODES=[];for(let i=0;i<34;i++)NODES.push([rnd()*1920,40+rnd()*840,rnd()*6.28]);
+(function(){let s='';const E=[];
+ NODES.forEach((a,i)=>NODES.forEach((b,j)=>{if(j>i&&Math.hypot(a[0]-b[0],a[1]-b[1])<300)E.push([i,j])}));
+ E.forEach(([i,j],k)=>s+=`<line id="ae${k}" x1="${NODES[i][0]}" y1="${NODES[i][1]}" x2="${NODES[j][0]}" y2="${NODES[j][1]}" stroke="#22d3e6" stroke-width="1.2"/>`);
+ NODES.forEach((n,i)=>s+=`<circle id="an${i}" cx="${n[0]}" cy="${n[1]}" r="4" fill="#22d3e6"/>`);
+ $('aiNet').innerHTML=s;window._aiE=E;})();
+
+function pop(el,t,a,dy=40,d=.55,extra=''){const k=inOut(t,a,d);el.style.opacity=k;el.style.transform=`translateY(${(1-k)*dy}px) scale(${.96+.04*k}) ${extra}`;return k;}
+
+function renderAI(t){
+  $('aiNet').style.opacity=.10+.18*inOut(t,0,1.5);
+  NODES.forEach((n,i)=>{$('an'+i).setAttribute('opacity',.35+.65*Math.abs(Math.sin(t*1.3+n[2])));});
+  _aiE.forEach((e,k)=>{$('ae'+k).setAttribute('opacity',.25+.55*Math.max(0,Math.sin(t*1.1+k*.7)));});
+  pop($('aiBadge'),t,.05,20);
+  pop($('aiTitle'),t,.2,50,.6);
+  pop($('aiEn'),t,.75,30);
+  CHIPS.forEach((c,i)=>{const a=1.1+i*.35, k=back((t-a)/.6), k2=clamp((t-a)/.35);
+    const el=$('aic'+i); el.style.opacity=k2;
+    const drift=Math.sin(t*1.1+i*1.7)*4*clamp(t-a-.6);
+    el.style.transform=`translateY(${(1-k)*50+drift}px) scale(${.9+.1*k})`;
+    el.style.boxShadow=`0 0 ${30*Math.max(0,1-Math.abs(t-a-.45)/.5)}px rgba(34,211,230,.6)`;});
+  pop($('aiCap'),t,2.6,24);
+  AIV.forEach((v,i)=>{const a=2.85+i*.17, k=back((t-a)/.55), k2=clamp((t-a)/.3);
+    const el=$('ail'+i); el.style.opacity=k2;
+    const drift=Math.sin(t*1.4+i*1.1)*5*clamp(t-a-.55);
+    el.style.transform=`translateY(${(1-k)*60+drift}px) scale(${.7+.3*k})`;});
+}
+
+/* ---------- Partners scene build ---------- */
+const PARTNERS=[
+ ['fortinet','Fortinet','#e2252d'],['kaspersky','Kaspersky','#00a88e'],
+ ['paloalto'],['cisco'],['microsoft'],['google'],['aws'],
+ ['anthropic'],['openai'],['ibm'],['huawei'],['crowdstrike'],['trellix'],['f5'],
+ ['akamai'],['cloudflare'],['broadcom'],['hpe'],['lenovo'],['nutanix'],['proofpoint'],
+ ['forcepoint'],['forescout'],['sailpoint'],['recorded_future'],['group_ib'],['barracuda'],['delinea'],
+ ['netscout'],['extrahop'],['firemon'],['netwrix'],['opentext'],['quest'],['paessler_prtg'],
+ ['schneider'],['hikvision'],['seclore'],['phishrod'],['arcon'],['fortra']
+];
+const COLS=7,CW=222,CH=100,GX=18,GY=16,GTOP=214,GX0=(1920-(COLS*CW+(COLS-1)*GX))/2;
+const NROWS=Math.ceil(PARTNERS.length/COLS);
+PARTNERS.forEach((p,i)=>{const r=Math.floor(i/COLS),c=i%COLS;
+  const inRow=Math.min(COLS,PARTNERS.length-r*COLS), off=(COLS-inRow)*(CW+GX)/2;
+  const d=document.createElement('div');d.className='mcard';d.id='pm'+i;
+  d.style.cssText=`right:${GX0+off+c*(CW+GX)}px;top:${GTOP+r*(CH+GY)}px;width:${CW}px;height:${CH}px`;
+  if(p[2]){d.style.outline=`5px solid ${p[2]}`;d.style.outlineOffset='3px';}
+  d.innerHTML=`<img src="partners/${p[0]}.png" alt="${p[1]||p[0]}">`;
+  d._r=r;d._c=c;d._hl=p[2];$('paGrid').appendChild(d);});
+
+function renderPartners(t){
+  pop($('paTitle'),t,.1,50,.6);
+  pop($('paEn'),t,.5,24);
+  const gd=clamp(t-3.8);
+  $('paGrid').style.transform=`translateX(${Math.sin(t*.5)*8*gd}px)`;
+  PARTNERS.forEach((p,i)=>{const el=$('pm'+i);
+    // diagonal sweep from top-right (RTL reading start)
+    const a=p[2]?0.75+i*.25:1.15+el._c*.2+el._r*.22;
+    const k=back((t-a)/.5), k2=clamp((t-a)/.25);
+    el.style.opacity=k2;
+    const drift=Math.sin(t*1.2+i*.9)*3*clamp(t-a-.5);
+    let sc=.6+.4*k;
+    if(p[2]){const g=.5+.5*Math.sin((t-3.4)*3.2);const on=clamp((t-3.2)/.5);
+      sc*=1+.04*on;
+      el.style.boxShadow=`0 10px 26px rgba(0,0,0,.4),0 0 ${12+28*on*g}px ${p[2]}`;
+      el.style.zIndex=2;}
+    el.style.transform=`translateY(${-(1-k)*30+drift}px) scale(${sc})`;});
+}
+
+/* ---------- helpers ---------- */
+let cur=null;
+function show(name,t){cur=name;
+  $('sAI').style.opacity=name==='ai'?1:0; $('sPA').style.opacity=name==='partners'?1:0;
+  if(t===undefined)t=6;
+  if(name==='ai')renderAI(t); else renderPartners(t);
+  $('grid').style.transform=`translate(${(t*12)%80}px,${(t*6)%80}px)`;}
+window.renderAI=renderAI;window.renderPartners=renderPartners;window.show=show;
+const q=new URLSearchParams(location.search);show(q.get('s')||'ai',q.has('t')?+q.get('t'):6);
+</script>
+</body>
+</html>
